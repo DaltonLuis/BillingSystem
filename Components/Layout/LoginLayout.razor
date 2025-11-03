@@ -1,0 +1,64 @@
+<div class="vh-100">
+    <div class="authincation h-100">
+        <div class="container h-100">
+            <div class="row justify-content-center h-100 align-items-center">
+                <div class="col-md-6">
+                    <div class="authincation-content">
+                        <div class="row no-gutters">
+                            <div class="col-xl-12">
+
+                                <div class="auth-form">
+                                    @* <?php 
+                                    if (isset($_SESSION['alert'])) {
+                                    echo $_SESSION['alert'];
+                                    $_SESSION['alert']="";
+                                    }
+                                    ?>
+                                    <?php if (!empty($alert))
+                                    {
+                                    ?> *@
+                                    @* <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top:-21%;">
+
+                                    <strong>Atenção!</strong> <?php echo isset($alert)? $alert: ''; ?>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    </div>
+
+                                    <?php
+                                    }
+                                    ?> *@
+									<div class="text-center mb-3">
+										<img src="../../../arq/icons/530c28scedecc17csc624d441b4bc6631041.png" alt="" style="width:90%;height:90%;border-radius:40%;margin-top:-20%;margin-bottom:-24%;">
+									</div>
+                                    <h4 class="text-center mb-4"style="color:#092564;margin-bottom:-10%;font-size:16pt;">Area de Login</h4>
+                                    <form autocomplete="false" method="post">
+                                        <div class="form-group">
+                                            <label class="mb-1"><strong>Email/Usuário/Contacto</strong></label>
+                                            <input type="text" class="form-control" placeholder="usuario@csc.com" name="nome_usuer_andre">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="mb-1"><strong>Palavra passe</strong></label>
+                                            <input type="password" class="form-control" value="" name="senha_usuer_andre">
+                                        </div>
+                                        
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-primary btn-block">Efectuar Login</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @* </script><script src="../../../arq/vendor/global/global.min.js"></script>
+    <script src="../../../arq/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    <script src="../../../arq/vendor/toastr/js/toastr.min.js"></script>
+    <script src="../../../arq/js/plugins-init/toastr-init.js"></script>
+    <script src="../../../arq/js/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="../../../arq/vendor/toastr/js/toastr.min.js"></script>
+    <script  type="text/javascript" charset="utf-8" src="../js/login.js"></script> *@
+</div>

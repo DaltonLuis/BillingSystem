@@ -1,0 +1,42 @@
+<li>
+    <button type="button" 
+            class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" 
+            @onclick="ToggleDropdown">
+        <i class="@IconLeft w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"></i>
+        <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">@Title</span>
+        <i class="@IconRight"></i>
+    </button>
+    
+    @if (IsDropdownOpen)
+    {
+        <ul class="py-2 space-y-2">
+            @foreach (var element in Elements)
+            {
+                <li>
+                    <a href="#" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">@element</a>
+                </li>
+            }
+        </ul>
+    }
+</li>
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public string IconLeft { get; set; } = string.Empty;
+
+    [Parameter]
+    public string IconRight { get; set; } = string.Empty;
+
+    [Parameter]
+    public List<string> Elements { get; set; } = new List<string>();
+
+    private bool IsDropdownOpen = false;
+
+    private void ToggleDropdown()
+    {
+        IsDropdownOpen = !IsDropdownOpen;
+    }
+}

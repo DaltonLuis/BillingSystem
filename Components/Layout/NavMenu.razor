@@ -1,0 +1,21 @@
+﻿@using BillingSystem.Components.Elements
+@rendermode InteractiveServer
+
+<NavBar />
+
+<aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-15 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
+   <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+      <ul class="space-y-2 font-medium">
+        <DropDownMenu Title="Dashboard" Elements="dashboardItems" IconLeft="fa-solid fa-chart-pie" IconRight="fa-solid fa-angle-down" />
+        <DropDownMenu Title="Configurations" Elements="configurationsItems" IconLeft="fa-solid fa-cog" IconRight="fa-solid fa-angle-down" />
+        <DropDownMenu Title="Management" Elements="managementItems" IconLeft="fa-solid fa-briefcase" IconRight="fa-solid fa-angle-down" />
+      </ul>
+   </div>
+</aside>
+
+@code {
+    private List<string> dashboardItems = new List<string> { "Home", "Graphical Reports" };
+    private List<string> configurationsItems = new List<string> { "Companies", "Projections", "Goals", "Levels" };
+    private List<string> managementItems = new List<string> { "Products", "Users", "Recipe Categories", "Expense Categories", "Contacts", "Expenses", "Revenues", "Stores/Branches", "Customers", "Suppliers" };
+    
+}
