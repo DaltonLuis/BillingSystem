@@ -37,8 +37,13 @@ A **modern billing and invoicing system** built with **Blazor (.NET 8)** that he
 ```bash
 git clone https://github.com/DaltonLuis/BillingSystem.git
 cd BillingSystem
+<<<<<<< HEAD
 ```
 ### 2. Clone the Repository
+=======
+
+### 1. Clone the Repository
+>>>>>>> d6afc8b9bcc92d5ef99dd67a4c1bb4c24440c96b
 ```ini
 CONNECTION_STRING=your_database_connection_string
 JWT_SECRET=your_secret_key
