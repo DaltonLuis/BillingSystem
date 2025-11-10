@@ -1,45 +1,61 @@
-# 💳 Billing System
+# 👋 Hey, I'm Dalton Luís
 
-A **modern billing and invoicing system** built with **Blazor (.NET 8)** that helps businesses manage customers, invoices, payments, and reports efficiently.
-
----
-
-## 🚀 Features
-
-- 👥 **Customer Management** – Create, update, and view customer profiles.  
-- 💰 **Invoice Management** – Generate and track invoices for services or products.  
-- 🧾 **Payment Tracking** – Record and manage payments with real-time status updates.  
-- 📊 **Dashboard & Reports** – View sales summaries, outstanding balances, and trends.  
-- 🔒 **Authentication & Authorization** – Secure login and role-based access control.  
-- ⚙️ **Configurable Tax & Discounts** – Add VAT, discounts, or other price adjustments.  
-- 🌐 **Responsive UI** – Clean, modern interface built with Blazor components.  
-- 📡 **API Ready** – Backend built to integrate with external systems or frontends.
+I’m a software builder passionate about **developer experience**, **scalable systems**, and **automation that empowers creativity**.  
+I believe in clarity, small iterations, and measurable impact.
 
 ---
 
-## 🧱 Tech Stack
-
-| Layer | Technology |
-|-------|-------------|
-| **Frontend** | Blazor Server (.NET 8) |
-| **Backend** | ASP.NET Core Web API |
-| **Database** | MySQL / SQL Server |
-| **ORM** | Entity Framework Core |
-| **Authentication** | JWT (JSON Web Tokens) |
-| **Styling** | TailwindCSS / Bootstrap |
-| **Version Control** | Git + GitHub |
+## 🚀 About Me
+- 🔭 **Currently building:** full-stack applications with React, Node.js, and Go  
+- 🌱 **Learning:** Kubernetes, observability, and cloud-native design  
+- 👯 **Open to:** open-source collaboration and developer tooling projects  
+- 💬 **Topics I enjoy:** performance, automation, system design, CI/CD  
+- 📫 **Connect:** [LinkedIn](https://www.linkedin.com/in/dalton-bandeira-lu%C3%ADs) · [Email](mailto:luisinho2dbl@gmail.com)  
+- ⚡ **Fun fact:** I love creating small tools that eliminate repetitive tasks
 
 ---
 
-## 🛠️ Installation & Setup
+## 🛠️ Tech Stack
+**Languages:** JavaScript · TypeScript · Python · Go  
+**Frameworks & Tools:** React · Next.js · Node.js · Docker  
+**Cloud & Data:** AWS · GCP · PostgreSQL · Redis  
+**Practices:** TDD · CI/CD · Documentation-as-Code
 
-### 1. Clone the Repository
-```bash
-git clone https://github.com/DaltonLuis/BillingSystem.git
-cd BillingSystem
-```
-### 2. Configure Environment
-```ini
-CONNECTION_STRING=your_database_connection_string
-JWT_SECRET=your_secret_key
+---
 
+## 🌟 Featured Projects
+- **Real-Time Analytics Dashboard** — Live data insights with React + PostgreSQL  
+  Stack: React · Node.js · PostgreSQL
+
+- **Serverless APIs at Scale** — Event-driven architecture for large-scale data  
+  Stack: TypeScript · AWS Lambda · DynamoDB
+
+*(Replace with actual repositories and links.)*
+
+---
+
+## 📈 Recent Activity
+
+| 🕒 Date | 🧩 Repository | 📝 Commit Message |
+|:--------|:--------------|:-----------------|
+
+| 🕒 Date | 🧩 Repository | 📝 Commit Message |
+|:--------|:--------------|:-----------------|
+| _Updating..._ |  |  |
+
+> _This section is automatically updated every day by a GitHub Action._
+
+---
+
+## 📊 GitHub Insights
+<p align="center">
+  <img src="https://github-readme-stats.vercel.app/api?username=DaltonLuis&show_icons=true&theme=github_dark" alt="Stats" height="150" />
+  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=DaltonLuis&layout=compact&theme=github_dark" alt="Top Languages" height="150" />
+  <img src="https://streak-stats.demolab.com?user=DaltonLuis&theme=github-dark-blue" alt="Streak Stats" height="150" />
+</p>
+
+---
+
+## 🤝 Let’s Collaborate
+Open to **interesting projects**, **open-source contributions**, and **consulting opportunities**.  
+If this resonates, let’s connect and build something impactful together.
