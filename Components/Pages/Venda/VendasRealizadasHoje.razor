@@ -1,0 +1,181 @@
+@page "/venda/realizadas"
+@rendermode InteractiveServer
+@using BillingSystem.Components.Shared
+
+<PageTitle>Vendas Realizadas Hoje - Sistema de Faturação</PageTitle>
+
+<div class="p-6 bg-gray-50 min-h-screen">
+    <div class="mb-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Vendas Realizadas Hoje</h1>
+            <p class="text-gray-600">@DateTime.Now.ToString("dd/MM/yyyy")</p>
+        </div>
+        <ActionButton Icon="fa-solid fa-file-excel" 
+                      Text="Exportar" 
+                      Variant="success" 
+                      OnClick="ExportarVendas" />
+    </div>
+
+    <!-- Estatísticas Rápidas -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <StatCard Label="Total de Vendas" 
+                  Value="@totalVendas.ToString()" 
+                  Icon="fa-solid fa-shopping-cart" />
+        
+        <StatCard Label="Valor Total" 
+                  Value="@($"{valorTotal:N2} €")" 
+                  ValueColor="green"
+                  Icon="fa-solid fa-dollar-sign" />
+        
+        <StatCard Label="Ticket Médio" 
+                  Value="@($"{ticketMedio:N2} €")" 
+                  ValueColor="blue"
+                  Icon="fa-solid fa-chart-line" />
+        
+        <StatCard Label="Produtos Vendidos" 
+                  Value="@produtosVendidos.ToString()" 
+                  ValueColor="orange"
+                  Icon="fa-solid fa-box" />
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <!-- Filtros Rápidos -->
+        <div class="flex gap-4 mb-6">
+            <button @onclick="@(() => FiltrarPorStatus(null))" class="@GetFilterButtonClass(null)">
+                Todas
+            </button>
+            <button @onclick="@(() => FiltrarPorStatus("pago"))" class="@GetFilterButtonClass("pago")">
+                Pagas
+            </button>
+            <button @onclick="@(() => FiltrarPorStatus("pendente"))" class="@GetFilterButtonClass("pendente")">
+                Pendentes
+            </button>
+        </div>
+
+        <!-- Tabela de Vendas -->
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Hora</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Cliente</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Produtos</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Total</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Pagamento</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Status</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (vendasFiltradas.Count == 0)
+                    {
+                        <EmptyState Colspan="7" 
+                                    Message="Nenhuma venda realizada hoje" 
+                                    Icon="fa-solid fa-inbox" />
+                    }
+                    else
+                    {
+                        @foreach (var venda in vendasFiltradas)
+                        {
+                            <tr class="border-b border-gray-200 hover:bg-gray-50">
+                                <td class="px-4 py-3 text-sm">@venda.Hora.ToString("HH:mm")</td>
+                                <td class="px-4 py-3 text-sm font-medium">@venda.Cliente</td>
+                                <td class="px-4 py-3 text-sm">@venda.QuantidadeProdutos itens</td>
+                                <td class="px-4 py-3 text-sm font-bold text-gray-800">@venda.Total.ToString("N2") €</td>
+                                <td class="px-4 py-3 text-sm">@venda.FormaPagamento</td>
+                                <td class="px-4 py-3">
+                                    <StatusBadge Status="@venda.Status" />
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="flex gap-2">
+                                        <IconButton Icon="fa-solid fa-eye" 
+                                                    ColorScheme="blue" 
+                                                    Title="Detalhes" 
+                                                    OnClick="@(() => VisualizarDetalhes(venda.Id))" />
+                                        <IconButton Icon="fa-solid fa-print" 
+                                                    ColorScheme="gray" 
+                                                    Title="Imprimir" 
+                                                    OnClick="@(() => ImprimirRecibo(venda.Id))" />
+                                        <IconButton Icon="fa-solid fa-times-circle" 
+                                                    ColorScheme="red" 
+                                                    Title="Cancelar" 
+                                                    OnClick="@(() => CancelarVenda(venda.Id))" />
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<VendaRealizadaDto> vendas = new();
+    private List<VendaRealizadaDto> vendasFiltradas = new();
+    private string? statusFiltro = null;
+    private int totalVendas = 0;
+    private decimal valorTotal = 0;
+    private decimal ticketMedio = 0;
+    private int produtosVendidos = 0;
+
+    protected override void OnInitialized()
+    {
+        CarregarVendas();
+    }
+
+    private void CarregarVendas()
+    {
+        // Exemplo de dados
+        vendas = new List<VendaRealizadaDto>
+        {
+            new VendaRealizadaDto { Id = 1, Hora = DateTime.Now.AddHours(-2), Cliente = "João Silva", QuantidadeProdutos = 3, Total = 150.00m, FormaPagamento = "Dinheiro", Status = "pago" },
+            new VendaRealizadaDto { Id = 2, Hora = DateTime.Now.AddHours(-1), Cliente = "Maria Santos", QuantidadeProdutos = 5, Total = 320.00m, FormaPagamento = "Cartão", Status = "pago" }
+        };
+        
+        vendasFiltradas = vendas;
+        CalcularEstatisticas();
+    }
+
+    private void FiltrarPorStatus(string? status)
+    {
+        statusFiltro = status;
+        vendasFiltradas = status == null 
+            ? vendas 
+            : vendas.Where(v => v.Status == status).ToList();
+        CalcularEstatisticas();
+    }
+
+    private string GetFilterButtonClass(string? status)
+    {
+        var baseClass = "px-4 py-2 rounded-lg font-medium transition-colors";
+        return statusFiltro == status 
+            ? $"{baseClass} bg-orange-500 text-white" 
+            : $"{baseClass} bg-gray-100 text-gray-700 hover:bg-gray-200";
+    }
+
+    private void CalcularEstatisticas()
+    {
+        totalVendas = vendasFiltradas.Count;
+        valorTotal = vendasFiltradas.Sum(v => v.Total);
+        ticketMedio = totalVendas > 0 ? valorTotal / totalVendas : 0;
+        produtosVendidos = vendasFiltradas.Sum(v => v.QuantidadeProdutos);
+    }
+
+    private void VisualizarDetalhes(int vendaId) { }
+    private void ImprimirRecibo(int vendaId) { }
+    private void CancelarVenda(int vendaId) { }
+    private void ExportarVendas() { }
+
+    public class VendaRealizadaDto
+    {
+        public int Id { get; set; }
+        public DateTime Hora { get; set; }
+        public string Cliente { get; set; } = "";
+        public int QuantidadeProdutos { get; set; }
+        public decimal Total { get; set; }
+        public string FormaPagamento { get; set; } = "";
+        public string Status { get; set; } = "";
+    }
+}

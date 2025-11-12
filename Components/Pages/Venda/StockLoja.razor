@@ -1,0 +1,174 @@
+@page "/venda/stock-loja"
+@rendermode InteractiveServer
+@using BillingSystem.Components.Shared
+
+<PageTitle>Gestão de Stock Loja - Sistema de Faturação</PageTitle>
+
+<div class="p-6 bg-gray-50 min-h-screen">
+    <div class="mb-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Gestão de Stock - Loja</h1>
+            <p class="text-gray-600">Controle de estoque da loja</p>
+        </div>
+        <div class="flex gap-2">
+            <ActionButton Icon="fa-solid fa-balance-scale" 
+                          Text="Ajuste de Stock" 
+                          Variant="primary" 
+                          OnClick="AjusteStock" />
+            <ActionButton Icon="fa-solid fa-exchange-alt" 
+                          Text="Transferir" 
+                          Variant="secondary" 
+                          OnClick="TransferirParaArmazem" />
+        </div>
+    </div>
+
+    <!-- Alertas de Stock -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <Alert Type="error" 
+               Icon="fa-solid fa-exclamation-triangle" 
+               Title="Stock Crítico" 
+               Message="5 produtos abaixo do mínimo" />
+        
+        <Alert Type="warning" 
+               Icon="fa-solid fa-exclamation-circle" 
+               Title="Stock Baixo" 
+               Message="12 produtos próximos do mínimo" />
+        
+        <Alert Type="success" 
+               Icon="fa-solid fa-check-circle" 
+               Title="Stock Normal" 
+               Message="82 produtos em estoque adequado" />
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <!-- Filtros -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Pesquisar Produto</label>
+                <input type="text" @bind="searchTerm" placeholder="Nome ou código..." class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Categoria</label>
+                <select @bind="categoriaSelecionada" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                    <option value="">Todas</option>
+                    <option value="1">Eletrônicos</option>
+                    <option value="2">Alimentos</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Situação Stock</label>
+                <select @bind="situacaoStock" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                    <option value="">Todos</option>
+                    <option value="critico">Crítico</option>
+                    <option value="baixo">Baixo</option>
+                    <option value="normal">Normal</option>
+                    <option value="excesso">Excesso</option>
+                </select>
+            </div>
+            <div class="flex items-end">
+                <button @onclick="Filtrar" class="w-full bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg">
+                    Filtrar
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabela de Stock -->
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Código</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Produto</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Categoria</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Stock Atual</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Stock Mín.</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Stock Máx.</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Situação</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in produtosStock)
+                    {
+                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm font-mono">@item.Codigo</td>
+                            <td class="px-4 py-3 text-sm font-medium">@item.Nome</td>
+                            <td class="px-4 py-3 text-sm">@item.Categoria</td>
+                            <td class="px-4 py-3 text-sm font-bold @GetStockColorClass(item)">@item.StockAtual</td>
+                            <td class="px-4 py-3 text-sm">@item.StockMinimo</td>
+                            <td class="px-4 py-3 text-sm">@item.StockMaximo</td>
+                            <td class="px-4 py-3">
+                                <StatusBadge Status="@GetStockStatus(item)" />
+                            </td>
+                            <td class="px-4 py-3">
+                                <div class="flex gap-2">
+                                    <IconButton Icon="fa-solid fa-edit" 
+                                                ColorScheme="blue" 
+                                                Title="Ajustar" 
+                                                OnClick="@(() => AjustarStock(item.Id))" />
+                                    <IconButton Icon="fa-solid fa-history" 
+                                                ColorScheme="gray" 
+                                                Title="Histórico" 
+                                                OnClick="@(() => VerHistorico(item.Id))" />
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string searchTerm = "";
+    private string categoriaSelecionada = "";
+    private string situacaoStock = "";
+    private List<StockProdutoDto> produtosStock = new();
+
+    protected override void OnInitialized()
+    {
+        CarregarStock();
+    }
+
+    private void CarregarStock()
+    {
+        produtosStock = new List<StockProdutoDto>
+        {
+            new StockProdutoDto { Id = 1, Codigo = "P001", Nome = "Produto A", Categoria = "Eletrônicos", StockAtual = 5, StockMinimo = 10, StockMaximo = 50 },
+            new StockProdutoDto { Id = 2, Codigo = "P002", Nome = "Produto B", Categoria = "Alimentos", StockAtual = 25, StockMinimo = 15, StockMaximo = 100 },
+            new StockProdutoDto { Id = 3, Codigo = "P003", Nome = "Produto C", Categoria = "Eletrônicos", StockAtual = 12, StockMinimo = 10, StockMaximo = 40 }
+        };
+    }
+
+    private string GetStockColorClass(StockProdutoDto item)
+    {
+        if (item.StockAtual <= item.StockMinimo) return "text-red-600";
+        if (item.StockAtual <= item.StockMinimo * 1.5) return "text-yellow-600";
+        return "text-green-600";
+    }
+
+    private string GetStockStatus(StockProdutoDto item)
+    {
+        if (item.StockAtual <= item.StockMinimo) return "critico";
+        if (item.StockAtual <= item.StockMinimo * 1.5) return "baixo";
+        return "normal";
+    }
+
+    private void Filtrar() { }
+    private void AjusteStock() { }
+    private void TransferirParaArmazem() { }
+    private void AjustarStock(int id) { }
+    private void VerHistorico(int id) { }
+
+    public class StockProdutoDto
+    {
+        public int Id { get; set; }
+        public string Codigo { get; set; } = "";
+        public string Nome { get; set; } = "";
+        public string Categoria { get; set; } = "";
+        public int StockAtual { get; set; }
+        public int StockMinimo { get; set; }
+        public int StockMaximo { get; set; }
+    }
+}

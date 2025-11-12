@@ -1,0 +1,101 @@
+@* Componente reutilizável para cards de estatísticas *@
+
+<div class="@GetCardClass()">
+    @if (!string.IsNullOrEmpty(Icon))
+    {
+        <div class="flex justify-between items-start mb-2">
+            <div class="flex-1">
+                <p class="@LabelClass">@Label</p>
+            </div>
+            <i class="@Icon @IconColorClass text-xl"></i>
+        </div>
+    }
+    else
+    {
+        <p class="@LabelClass mb-2">@Label</p>
+    }
+    
+    <p class="@ValueClass">@Value</p>
+    
+    @if (!string.IsNullOrEmpty(Subtitle))
+    {
+        <p class="@SubtitleClass mt-2">@Subtitle</p>
+    }
+    
+    @if (ChildContent != null)
+    {
+        <div class="mt-4">
+            @ChildContent
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Label { get; set; } = "";
+
+    [Parameter]
+    public string Value { get; set; } = "";
+
+    [Parameter]
+    public string? Subtitle { get; set; }
+
+    [Parameter]
+    public string? Icon { get; set; }
+
+    [Parameter]
+    public string CardStyle { get; set; } = "white"; // white, gradient-blue, gradient-green, gradient-orange, gradient-purple
+
+    [Parameter]
+    public string ValueColor { get; set; } = "gray"; // gray, green, orange, blue, red, purple
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string GetCardClass()
+    {
+        var baseClass = "rounded-lg shadow p-6";
+        
+        return CardStyle switch
+        {
+            "gradient-blue" => $"{baseClass} bg-gradient-to-br from-blue-500 to-blue-600 text-white",
+            "gradient-green" => $"{baseClass} bg-gradient-to-br from-green-500 to-green-600 text-white",
+            "gradient-orange" => $"{baseClass} bg-gradient-to-br from-orange-500 to-orange-600 text-white",
+            "gradient-purple" => $"{baseClass} bg-gradient-to-br from-purple-500 to-purple-600 text-white",
+            _ => $"{baseClass} bg-white"
+        };
+    }
+
+    private string LabelClass => CardStyle.StartsWith("gradient") 
+        ? "text-sm opacity-90" 
+        : "text-sm text-gray-600";
+
+    private string ValueClass
+    {
+        get
+        {
+            var baseClass = "text-3xl font-bold";
+            
+            if (CardStyle.StartsWith("gradient"))
+                return baseClass;
+
+            return ValueColor switch
+            {
+                "green" => $"{baseClass} text-green-600",
+                "orange" => $"{baseClass} text-orange-600",
+                "blue" => $"{baseClass} text-blue-600",
+                "red" => $"{baseClass} text-red-600",
+                "purple" => $"{baseClass} text-purple-600",
+                _ => $"{baseClass} text-gray-800"
+            };
+        }
+    }
+
+    private string SubtitleClass => CardStyle.StartsWith("gradient") 
+        ? "text-xs opacity-75" 
+        : "text-xs text-gray-500";
+
+    private string IconColorClass => CardStyle.StartsWith("gradient") 
+        ? "opacity-75" 
+        : "text-gray-400";
+}

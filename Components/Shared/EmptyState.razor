@@ -1,0 +1,23 @@
+@* Componente de tabela vazia reutilizável *@
+
+<tr>
+    <td colspan="@Colspan" class="px-4 py-8 text-center text-gray-500">
+        @if (!string.IsNullOrEmpty(Icon))
+        {
+            <i class="@Icon text-4xl text-gray-300 mb-2"></i>
+            <br />
+        }
+        @Message
+    </td>
+</tr>
+
+@code {
+    [Parameter]
+    public int Colspan { get; set; } = 1;
+
+    [Parameter]
+    public string Message { get; set; } = "Nenhum registro encontrado";
+
+    [Parameter]
+    public string? Icon { get; set; }
+}

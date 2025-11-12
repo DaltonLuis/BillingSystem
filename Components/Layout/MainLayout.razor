@@ -1,14 +1,22 @@
 ﻿@inherits LayoutComponentBase
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+@using BillingSystem.Components.Elements
 
-    <main>
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
+<div class="flex h-screen overflow-hidden bg-gray-50">
+    <!-- Sidebar -->
+    <NavMenu />
+    
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col ml-64">
+        <!-- Top Navbar -->
+        <NavBar />
+        
+        <!-- Page Content -->
+        <main class="flex-1 overflow-x-hidden overflow-y-auto mt-20">
+            <article class="w-full">
+                @Body
+            </article>
+        </main>
+    </div>
 </div>
 
 <div id="blazor-error-ui" data-nosnippet>

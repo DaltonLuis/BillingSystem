@@ -1,0 +1,176 @@
+@page "/venda/relatorio"
+@rendermode InteractiveServer
+@using BillingSystem.Components.Shared
+
+<PageTitle>Relatório de Vendas - Sistema de Faturação</PageTitle>
+
+<div class="p-6 bg-gray-50 min-h-screen">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Relatório de Vendas</h1>
+        <p class="text-gray-600">Análise detalhada e relatórios de vendas</p>
+    </div>
+
+    <!-- Filtros de Período -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Data Inicial</label>
+                <input type="date" @bind="dataInicial" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Data Final</label>
+                <input type="date" @bind="dataFinal" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Agrupar Por</label>
+                <select @bind="agruparPor" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                    <option value="dia">Dia</option>
+                    <option value="semana">Semana</option>
+                    <option value="mes">Mês</option>
+                    <option value="produto">Produto</option>
+                    <option value="cliente">Cliente</option>
+                </select>
+            </div>
+            <div class="flex items-end gap-2">
+                <ActionButton Icon="fa-solid fa-chart-bar" 
+                              Text="Gerar" 
+                              OnClick="GerarRelatorio" 
+                              class="flex-1" />
+                <ActionButton Icon="fa-solid fa-file-pdf" 
+                              Variant="danger" 
+                              OnClick="ExportarPDF" 
+                              Title="Exportar PDF" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards de Resumo -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+        <StatCard Label="Total Faturado" 
+                  Value="@($"{totalFaturado:N2} €")" 
+                  Subtitle="↑ 12% vs período anterior" 
+                  CardStyle="gradient-blue" />
+        
+        <StatCard Label="Vendas Realizadas" 
+                  Value="@totalVendas.ToString()" 
+                  Subtitle="↑ 8% vs período anterior" 
+                  CardStyle="gradient-green" />
+        
+        <StatCard Label="Ticket Médio" 
+                  Value="@($"{ticketMedio:N2} €")" 
+                  Subtitle="↑ 4% vs período anterior" 
+                  CardStyle="gradient-orange" />
+        
+        <StatCard Label="Produtos Vendidos" 
+                  Value="@produtosVendidos.ToString()" 
+                  Subtitle="↑ 15% vs período anterior" 
+                  CardStyle="gradient-purple" />
+    </div>
+
+    <!-- Gráficos -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Gráfico de Vendas por Período -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Vendas por Período</h3>
+            <div class="h-64 flex items-center justify-center bg-gray-50 rounded">
+                <p class="text-gray-400">Gráfico de Linha (Integração Chart.js)</p>
+            </div>
+        </div>
+
+        <!-- Gráfico de Formas de Pagamento -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Formas de Pagamento</h3>
+            <div class="h-64 flex items-center justify-center bg-gray-50 rounded">
+                <p class="text-gray-400">Gráfico de Pizza (Integração Chart.js)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Produtos -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Top 10 Produtos Mais Vendidos</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">#</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Produto</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Quantidade</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Valor Total</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Participação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm font-bold">@i</td>
+                            <td class="px-4 py-3 text-sm">Produto @i</td>
+                            <td class="px-4 py-3 text-sm">@((50 - i * 5)) unidades</td>
+                            <td class="px-4 py-3 text-sm font-semibold">@((1000 - i * 100)).00 €</td>
+                            <td class="px-4 py-3">
+                                <div class="flex items-center gap-2">
+                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-orange-500 h-2 rounded-full" style="width: @((100 - i * 10))%"></div>
+                                    </div>
+                                    <span class="text-sm text-gray-600">@((100 - i * 10))%</span>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Top Clientes -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Top 10 Clientes</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">#</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Cliente</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Compras</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Valor Total</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Ticket Médio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                            <td class="px-4 py-3 text-sm font-bold">@i</td>
+                            <td class="px-4 py-3 text-sm font-medium">Cliente @i</td>
+                            <td class="px-4 py-3 text-sm">@((20 - i * 2)) vendas</td>
+                            <td class="px-4 py-3 text-sm font-semibold text-green-600">@((5000 - i * 500)).00 €</td>
+                            <td class="px-4 py-3 text-sm">@(((5000 - i * 500) / (20 - i * 2)).ToString("N2")) €</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code {
+    private DateTime dataInicial = DateTime.Now.AddMonths(-1);
+    private DateTime dataFinal = DateTime.Now;
+    private string agruparPor = "dia";
+    
+    private decimal totalFaturado = 15780.50m;
+    private int totalVendas = 156;
+    private decimal ticketMedio = 101.16m;
+    private int produtosVendidos = 487;
+
+    private void GerarRelatorio()
+    {
+        // Gerar relatório com filtros aplicados
+    }
+
+    private void ExportarPDF()
+    {
+        // Exportar relatório em PDF
+    }
+}

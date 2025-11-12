@@ -1,0 +1,116 @@
+@* Componente de alerta reutilizável *@
+
+<div class="@GetAlertClass()">
+    <div class="flex items-center gap-3">
+        @if (!string.IsNullOrEmpty(Icon))
+        {
+            <i class="@Icon @GetIconClass() text-xl"></i>
+        }
+        <div class="flex-1">
+            @if (!string.IsNullOrEmpty(Title))
+            {
+                <p class="@GetTitleClass()">@Title</p>
+            }
+            @if (!string.IsNullOrEmpty(Message))
+            {
+                <p class="@GetMessageClass()">@Message</p>
+            }
+            @if (ChildContent != null)
+            {
+                @ChildContent
+            }
+        </div>
+        @if (Dismissible)
+        {
+            <button @onclick="OnDismiss" class="@GetCloseButtonClass()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Type { get; set; } = "info"; // info, success, warning, error
+
+    [Parameter]
+    public string? Icon { get; set; }
+
+    [Parameter]
+    public string? Title { get; set; }
+
+    [Parameter]
+    public string? Message { get; set; }
+
+    [Parameter]
+    public bool Dismissible { get; set; } = false;
+
+    [Parameter]
+    public bool HasBorder { get; set; } = true;
+
+    [Parameter]
+    public EventCallback OnDismiss { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string GetAlertClass()
+    {
+        var baseClass = "p-4 rounded";
+        var borderClass = HasBorder ? "border-l-4" : "";
+
+        var typeClass = Type switch
+        {
+            "success" => $"bg-green-50 {(HasBorder ? "border-green-500" : "")}",
+            "warning" => $"bg-yellow-50 {(HasBorder ? "border-yellow-500" : "")}",
+            "error" => $"bg-red-50 {(HasBorder ? "border-red-500" : "")}",
+            _ => $"bg-blue-50 {(HasBorder ? "border-blue-500" : "")}"
+        };
+
+        return $"{baseClass} {borderClass} {typeClass}";
+    }
+
+    private string GetIconClass()
+    {
+        return Type switch
+        {
+            "success" => "text-green-500",
+            "warning" => "text-yellow-500",
+            "error" => "text-red-500",
+            _ => "text-blue-500"
+        };
+    }
+
+    private string GetTitleClass()
+    {
+        return Type switch
+        {
+            "success" => "font-semibold text-green-800",
+            "warning" => "font-semibold text-yellow-800",
+            "error" => "font-semibold text-red-800",
+            _ => "font-semibold text-blue-800"
+        };
+    }
+
+    private string GetMessageClass()
+    {
+        return Type switch
+        {
+            "success" => "text-sm text-green-600",
+            "warning" => "text-sm text-yellow-600",
+            "error" => "text-sm text-red-600",
+            _ => "text-sm text-blue-600"
+        };
+    }
+
+    private string GetCloseButtonClass()
+    {
+        return Type switch
+        {
+            "success" => "text-green-500 hover:text-green-700",
+            "warning" => "text-yellow-500 hover:text-yellow-700",
+            "error" => "text-red-500 hover:text-red-700",
+            _ => "text-blue-500 hover:text-blue-700"
+        };
+    }
+}

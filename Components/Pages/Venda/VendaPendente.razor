@@ -1,0 +1,169 @@
+@page "/venda/pendente"
+@rendermode InteractiveServer
+@using BillingSystem.Components.Shared
+
+<PageTitle>Vendas Pendentes - Sistema de Faturação</PageTitle>
+
+<div class="p-6 bg-gray-50 min-h-screen">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Vendas Pendentes</h1>
+        <p class="text-gray-600">Gerencie vendas com pagamento pendente</p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <!-- Filtros -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Pesquisar</label>
+                <input type="text" @bind="searchTerm" placeholder="Cliente, produto..." class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:border-orange-500" />
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Data Inicial</label>
+                <input type="date" @bind="dataInicial" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:border-orange-500" />
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Data Final</label>
+                <input type="date" @bind="dataFinal" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:border-orange-500" />
+            </div>
+            <div class="flex items-end">
+                <ActionButton Icon="fa-solid fa-filter" 
+                              Text="Filtrar" 
+                              OnClick="Filtrar" 
+                              class="w-full" />
+            </div>
+        </div>
+
+        <!-- Tabela -->
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">ID</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Data</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Cliente</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Total</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Pago</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Faltante</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Status</th>
+                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (vendasPendentes.Count == 0)
+                    {
+                        <EmptyState Colspan="8" 
+                                    Message="Nenhuma venda pendente encontrada" 
+                                    Icon="fa-solid fa-inbox" />
+                    }
+                    else
+                    {
+                        @foreach (var venda in vendasPendentes)
+                        {
+                            <tr class="border-b border-gray-200 hover:bg-gray-50">
+                                <td class="px-4 py-3 text-sm">#@venda.Id</td>
+                                <td class="px-4 py-3 text-sm">@venda.Data.ToString("dd/MM/yyyy")</td>
+                                <td class="px-4 py-3 text-sm">@venda.Cliente</td>
+                                <td class="px-4 py-3 text-sm font-semibold">@venda.Total.ToString("N2") €</td>
+                                <td class="px-4 py-3 text-sm text-green-600">@venda.Pago.ToString("N2") €</td>
+                                <td class="px-4 py-3 text-sm text-red-600">@venda.Faltante.ToString("N2") €</td>
+                                <td class="px-4 py-3">
+                                    <StatusBadge Status="pendente" />
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="flex gap-2">
+                                        <IconButton Icon="fa-solid fa-money-bill" 
+                                                    ColorScheme="green" 
+                                                    Title="Receber Pagamento" 
+                                                    OnClick="@(() => ReceberPagamento(venda.Id))" />
+                                        <IconButton Icon="fa-solid fa-eye" 
+                                                    ColorScheme="blue" 
+                                                    Title="Visualizar" 
+                                                    OnClick="@(() => VisualizarVenda(venda.Id))" />
+                                        <IconButton Icon="fa-solid fa-print" 
+                                                    ColorScheme="gray" 
+                                                    Title="Imprimir" 
+                                                    OnClick="@(() => ImprimirVenda(venda.Id))" />
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Resumo -->
+        <div class="mt-6 p-4 bg-orange-50 rounded-lg">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <p class="text-sm text-gray-600">Total de Vendas Pendentes</p>
+                    <p class="text-2xl font-bold text-gray-800">@vendasPendentes.Count</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Total a Receber</p>
+                    <p class="text-2xl font-bold text-orange-600">@totalReceber.ToString("N2") €</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Já Recebido</p>
+                    <p class="text-2xl font-bold text-green-600">@totalRecebido.ToString("N2") €</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string searchTerm = "";
+    private DateTime dataInicial = DateTime.Now.AddMonths(-1);
+    private DateTime dataFinal = DateTime.Now;
+    private List<VendaPendenteDto> vendasPendentes = new();
+    private decimal totalReceber = 0;
+    private decimal totalRecebido = 0;
+
+    protected override void OnInitialized()
+    {
+        // Exemplo de dados
+        vendasPendentes = new List<VendaPendenteDto>
+        {
+            new VendaPendenteDto { Id = 1, Data = DateTime.Now.AddDays(-5), Cliente = "João Silva", Total = 500.00m, Pago = 200.00m, Faltante = 300.00m },
+            new VendaPendenteDto { Id = 2, Data = DateTime.Now.AddDays(-3), Cliente = "Maria Santos", Total = 750.00m, Pago = 0, Faltante = 750.00m }
+        };
+        CalcularTotais();
+    }
+
+    private void Filtrar()
+    {
+        // Implementar filtro
+    }
+
+    private void ReceberPagamento(int vendaId)
+    {
+        // Abrir modal de pagamento
+    }
+
+    private void VisualizarVenda(int vendaId)
+    {
+        // Navegar para detalhes
+    }
+
+    private void ImprimirVenda(int vendaId)
+    {
+        // Gerar impressão
+    }
+
+    private void CalcularTotais()
+    {
+        totalReceber = vendasPendentes.Sum(v => v.Faltante);
+        totalRecebido = vendasPendentes.Sum(v => v.Pago);
+    }
+
+    public class VendaPendenteDto
+    {
+        public int Id { get; set; }
+        public DateTime Data { get; set; }
+        public string Cliente { get; set; } = "";
+        public decimal Total { get; set; }
+        public decimal Pago { get; set; }
+        public decimal Faltante { get; set; }
+    }
+}
