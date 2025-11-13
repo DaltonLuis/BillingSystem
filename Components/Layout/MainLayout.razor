@@ -1,26 +1,71 @@
 ﻿@inherits LayoutComponentBase
-@using BillingSystem.Components.Elements
 
-<div class="flex h-screen overflow-hidden bg-gray-50">
-    <!-- Sidebar -->
-    <NavMenu />
+<MudThemeProvider Theme="@_theme" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="1" Color="Color.Surface">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+        <MudText Typo="Typo.h6" Class="ml-3">Sistema de Faturação</MudText>
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Filled.Search" Color="Color.Inherit" />
+        <MudIconButton Icon="@Icons.Material.Filled.DarkMode" Color="Color.Inherit" />
+        <MudIconButton Icon="@Icons.Material.Filled.Fullscreen" Color="Color.Inherit" />
+        <MudBadge Content="2" Color="Color.Error" Overlap="true">
+            <MudIconButton Icon="@Icons.Material.Filled.Notifications" Color="Color.Inherit" />
+        </MudBadge>
+        <MudMenu Icon="@Icons.Material.Filled.AccountCircle" Color="Color.Inherit" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+            <MudText Typo="Typo.body2" Class="px-4 py-2"><b>Dalton Luís</b></MudText>
+            <MudText Typo="Typo.caption" Class="px-4">Super Admin</MudText>
+            <MudDivider Class="my-2" />
+            <MudMenuItem Icon="@Icons.Material.Filled.Person">Meu Perfil</MudMenuItem>
+            <MudMenuItem Icon="@Icons.Material.Filled.Settings">Configurações</MudMenuItem>
+            <MudMenuItem Icon="@Icons.Material.Filled.Help">Ajuda</MudMenuItem>
+            <MudDivider Class="my-2" />
+            <MudMenuItem Icon="@Icons.Material.Filled.Logout" IconColor="Color.Error">Sair</MudMenuItem>
+        </MudMenu>
+    </MudAppBar>
     
-    <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col ml-64">
-        <!-- Top Navbar -->
-        <NavBar />
-        
-        <!-- Page Content -->
-        <main class="flex-1 overflow-x-hidden overflow-y-auto mt-20">
-            <article class="w-full">
-                @Body
-            </article>
-        </main>
-    </div>
-</div>
+    <MudDrawer @bind-Open="_drawerOpen" Elevation="2" ClipMode="DrawerClipMode.Always">
+        <MudDrawerHeader Class="d-flex align-center justify-center py-6">
+            <MudIcon Icon="@Icons.Material.Filled.Receipt" Size="Size.Large" Color="Color.Primary" />
+        </MudDrawerHeader>
+        <NavMenu />
+    </MudDrawer>
+    
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.False" Class="pa-6">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
 
-<div id="blazor-error-ui" data-nosnippet>
-    An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
-    <span class="dismiss">🗙</span>
-</div>
+@code {
+    private bool _drawerOpen = true;
+    private MudTheme _theme = new MudTheme()
+    {
+        PaletteLight = new PaletteLight()
+        {
+            Primary = "#FF6D00",
+            Secondary = "#424242",
+            AppbarBackground = "#FFFFFF",
+            Success = "#4CAF50",
+            Warning = "#FFC107",
+            Error = "#F44336",
+            Info = "#2196F3"
+        },
+        PaletteDark = new PaletteDark()
+        {
+            Primary = "#FF8A50",
+            Secondary = "#616161",
+            AppbarBackground = "#1E1E1E"
+        }
+    };
+
+    void ToggleDrawer()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+}

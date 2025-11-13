@@ -1,125 +1,129 @@
 ﻿@page "/"
 @rendermode InteractiveServer
-@using BillingSystem.Components.Shared
 
 <PageTitle>Dashboard - Sistema de Faturação</PageTitle>
 
-<div class="p-6 bg-gray-50 min-h-screen">
-    <!-- Header Section -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">Dashboard</h1>
-        <p class="text-orange-500">Olá, Dalton Luís Bem Vindo ao Sistema Csc-Lda!</p>
-        <p class="text-sm text-gray-600">Tenhas todo o prazer de consultar os teus Problemas aqui ☺</p>
-        <p class="text-sm text-gray-500 mt-2">Online, Segunda-Feira, 03 de Novembro de 2025</p>
+<!-- Header Section -->
+<MudText Typo="Typo.h3" Class="mb-2">Dashboard</MudText>
+<MudText Typo="Typo.body1" Color="Color.Primary" Class="mb-1">Olá, Dalton Luís Bem Vindo ao Sistema Csc-Lda!</MudText>
+<MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-1">Tenhas todo o prazer de consultar os teus Problemas aqui ☺</MudText>
+<MudText Typo="Typo.caption" Color="Color.Secondary" Class="mb-6">Online, Segunda-Feira, 03 de Novembro de 2025</MudText>
+
+<!-- Statistics Cards -->
+<MudGrid Class="mb-6">
+    <MudItem xs="12" sm="6" md="3">
+        <MudCard Elevation="2">
+            <MudCardContent>
+                <div class="d-flex justify-space-between align-center mb-2">
+                    <MudText Typo="Typo.h3">29</MudText>
+                    <MudIcon Icon="@Icons.Material.Filled.Inventory" Size="Size.Large" Color="Color.Primary" />
+                </div>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">Produtos Cadastrados</MudText>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true">Gerir Produtos Da Loja</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+
+    <MudItem xs="12" sm="6" md="3">
+        <MudCard Elevation="2">
+            <MudCardContent>
+                <div class="d-flex justify-space-between align-center mb-2">
+                    <MudText Typo="Typo.h3">2</MudText>
+                    <MudIcon Icon="@Icons.Material.Filled.Groups" Size="Size.Large" Color="Color.Success" />
+                </div>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">Clientes Cadastrados</MudText>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true">Ver Clientes</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+
+    <MudItem xs="12" sm="6" md="3">
+        <MudCard Elevation="2">
+            <MudCardContent>
+                <div class="d-flex justify-space-between align-center mb-2">
+                    <MudText Typo="Typo.h3">2</MudText>
+                    <MudIcon Icon="@Icons.Material.Filled.People" Size="Size.Large" Color="Color.Info" />
+                </div>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">Usuários Cadastrados</MudText>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true">Ver Usuários</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+
+    <MudItem xs="12" sm="6" md="3">
+        <MudCard Elevation="2">
+            <MudCardContent>
+                <div class="d-flex justify-space-between align-center mb-2">
+                    <MudText Typo="Typo.h3">1</MudText>
+                    <MudIcon Icon="@Icons.Material.Filled.LocalShipping" Size="Size.Large" Color="Color.Warning" />
+                </div>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">Fornecedor Cadastrados</MudText>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true">Ver Fornecedor</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+</MudGrid>
+
+<!-- Sales Table Section -->
+<MudPaper Elevation="2" Class="pa-6">
+    <div class="d-flex justify-space-between align-center mb-4">
+        <MudText Typo="Typo.h5">Vendas efectuada Hoje</MudText>
+        <MudButton Variant="Variant.Text" Color="Color.Primary">Procurar</MudButton>
     </div>
 
-    <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatCard Label="Produtos Cadastrados" 
-                  Value="29" 
-                  Icon="fa-solid fa-box">
-            <ActionButton Text="Gerir Produtos Da Loja" 
-                          Size="sm" 
-                          class="w-full" 
-                          OnClick="@(() => {})"/>
-        </StatCard>
+    <MudTable Items="@vendas" Hover="true" Breakpoint="Breakpoint.Sm" Loading="false" LoadingProgressColor="Color.Primary">
+        <ColGroup>
+            <col />
+            <col />
+            <col />
+            <col />
+            <col />
+            <col />
+            <col />
+        </ColGroup>
+        <HeaderContent>
+            <MudTh>Cliente</MudTh>
+            <MudTh>Descrição</MudTh>
+            <MudTh>Total</MudTh>
+            <MudTh>Situação</MudTh>
+            <MudTh>Status</MudTh>
+            <MudTh>T.Pago | T.Faltante</MudTh>
+            <MudTh>Acção</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText Typo="Typo.body1" Align="Align.Center" Class="py-8">Não foi encontrado nenhuma informação</MudText>
+        </NoRecordsContent>
+        <FooterContent>
+            <MudTd colspan="2">Mostrando 0 a 0 de 0 registros</MudTd>
+            <MudTd colspan="5" Style="text-align:right">
+                <MudText Typo="Typo.body2">Venda do dia 0,00 €</MudText>
+            </MudTd>
+        </FooterContent>
+    </MudTable>
 
-        <StatCard Label="Clientes Cadastrados" 
-                  Value="2" 
-                  Icon="fa-solid fa-users">
-            <ActionButton Text="Ver Clientes" 
-                          Size="sm" 
-                          class="w-full" 
-                          OnClick="@(() => {})"/>
-        </StatCard>
+    <MudText Typo="Typo.h6" Align="Align.Center" Class="mt-4">Total Caixa: 0,00 €</MudText>
+    <MudText Typo="Typo.body2" Align="Align.Center" Color="Color.Secondary" Class="mt-6">Maiores despesas</MudText>
+</MudPaper>
 
-        <StatCard Label="Usuários Cadastrados" 
-                  Value="2" 
-                  Icon="fa-solid fa-user-circle">
-            <ActionButton Text="Ver Usuários" 
-                          Size="sm" 
-                          class="w-full" 
-                          OnClick="@(() => {})"/>
-        </StatCard>
-
-        <StatCard Label="Fornecedor Cadastrados" 
-                  Value="1" 
-                  Icon="fa-solid fa-truck">
-            <ActionButton Text="Ver Fornecedor" 
-                          Size="sm" 
-                          class="w-full" 
-                          OnClick="@(() => {})"/>
-        </StatCard>
-    </div>
-
-    <!-- Sales Table Section -->
-    <div class="bg-white rounded-lg shadow p-6">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-2xl font-semibold text-gray-800">Vendas efectuada Hoje</h2>
-            <button class="text-orange-500 hover:text-orange-600">Procurar</button>
-        </div>
-
-        <div class="mb-4 flex items-center gap-4">
-            <label class="text-sm text-gray-600">Mostrar</label>
-            <select class="border border-gray-300 rounded px-2 py-1 text-sm">
-                <option>10</option>
-                <option>25</option>
-                <option>50</option>
-            </select>
-            <label class="text-sm text-gray-600">Registros Por Página</label>
-        </div>
-
-        <!-- Table -->
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Cliente</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Descrição</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Total</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Situação</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Status</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">T.Pago | T.Faltante</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Acção</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="7" class="px-4 py-8 text-center text-gray-500">
-                            Não foi encontrado nenhuma informação
-                        </td>
-                    </tr>
-                    <tr class="border-t border-gray-200">
-                        <td colspan="2" class="px-4 py-3 text-sm text-gray-600">Mostrando 0 a 0 de 0 registros</td>
-                        <td colspan="5" class="px-4 py-3 text-right text-sm text-gray-600">
-                            Venda do dia 0,00 €
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Total Section -->
-        <div class="mt-4 text-center">
-            <p class="text-lg font-semibold text-gray-700">Total Caixa: 0,00 €</p>
-        </div>
-
-        <!-- Footer Info -->
-        <div class="mt-6 text-center text-sm text-gray-500">
-            <p>Maiores despesas</p>
-        </div>
-    </div>
-
-    <!-- Footer Credit -->
-    <div class="mt-8 text-center text-sm text-gray-500">
-        <p>Sistema Desenvolvido por</p>
-        <p class="font-semibold">Dalton Luís</p>
-        <p>Todos os direitos reservados</p>
-        <p>by © Csc-Lda -> Sistem Solution</p>
-        <p>2022-2025</p>
-    </div>
-</div>
+<!-- Footer Credit -->
+<MudText Typo="Typo.caption" Align="Align.Center" Color="Color.Secondary" Class="mt-8">
+    Sistema Desenvolvido por<br/>
+    <strong>Dalton Luís</strong><br/>
+    Todos os direitos reservados<br/>
+    by © Csc-Lda -> Sistem Solution<br/>
+    2022-2025
+</MudText>
 
 @code {
-    
+    private List<object> vendas = new();
 }

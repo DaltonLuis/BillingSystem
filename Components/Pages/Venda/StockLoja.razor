@@ -1,124 +1,107 @@
 @page "/venda/stock-loja"
 @rendermode InteractiveServer
-@using BillingSystem.Components.Shared
 
 <PageTitle>Gestão de Stock Loja - Sistema de Faturação</PageTitle>
 
-<div class="p-6 bg-gray-50 min-h-screen">
-    <div class="mb-6 flex justify-between items-center">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">Gestão de Stock - Loja</h1>
-            <p class="text-gray-600">Controle de estoque da loja</p>
-        </div>
-        <div class="flex gap-2">
-            <ActionButton Icon="fa-solid fa-balance-scale" 
-                          Text="Ajuste de Stock" 
-                          Variant="primary" 
-                          OnClick="AjusteStock" />
-            <ActionButton Icon="fa-solid fa-exchange-alt" 
-                          Text="Transferir" 
-                          Variant="secondary" 
-                          OnClick="TransferirParaArmazem" />
-        </div>
+<div class="d-flex justify-space-between align-center mb-6">
+    <div>
+        <MudText Typo="Typo.h4">Gestão de Stock - Loja</MudText>
+        <MudText Typo="Typo.body2" Color="Color.Secondary">Controle de estoque da loja</MudText>
     </div>
-
-    <!-- Alertas de Stock -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Alert Type="error" 
-               Icon="fa-solid fa-exclamation-triangle" 
-               Title="Stock Crítico" 
-               Message="5 produtos abaixo do mínimo" />
-        
-        <Alert Type="warning" 
-               Icon="fa-solid fa-exclamation-circle" 
-               Title="Stock Baixo" 
-               Message="12 produtos próximos do mínimo" />
-        
-        <Alert Type="success" 
-               Icon="fa-solid fa-check-circle" 
-               Title="Stock Normal" 
-               Message="82 produtos em estoque adequado" />
-    </div>
-
-    <div class="bg-white rounded-lg shadow p-6">
-        <!-- Filtros -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Pesquisar Produto</label>
-                <input type="text" @bind="searchTerm" placeholder="Nome ou código..." class="w-full border border-gray-300 rounded-lg px-4 py-2" />
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Categoria</label>
-                <select @bind="categoriaSelecionada" class="w-full border border-gray-300 rounded-lg px-4 py-2">
-                    <option value="">Todas</option>
-                    <option value="1">Eletrônicos</option>
-                    <option value="2">Alimentos</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Situação Stock</label>
-                <select @bind="situacaoStock" class="w-full border border-gray-300 rounded-lg px-4 py-2">
-                    <option value="">Todos</option>
-                    <option value="critico">Crítico</option>
-                    <option value="baixo">Baixo</option>
-                    <option value="normal">Normal</option>
-                    <option value="excesso">Excesso</option>
-                </select>
-            </div>
-            <div class="flex items-end">
-                <button @onclick="Filtrar" class="w-full bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg">
-                    Filtrar
-                </button>
-            </div>
-        </div>
-
-        <!-- Tabela de Stock -->
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Código</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Produto</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Categoria</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Stock Atual</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Stock Mín.</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Stock Máx.</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Situação</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in produtosStock)
-                    {
-                        <tr class="border-b border-gray-200 hover:bg-gray-50">
-                            <td class="px-4 py-3 text-sm font-mono">@item.Codigo</td>
-                            <td class="px-4 py-3 text-sm font-medium">@item.Nome</td>
-                            <td class="px-4 py-3 text-sm">@item.Categoria</td>
-                            <td class="px-4 py-3 text-sm font-bold @GetStockColorClass(item)">@item.StockAtual</td>
-                            <td class="px-4 py-3 text-sm">@item.StockMinimo</td>
-                            <td class="px-4 py-3 text-sm">@item.StockMaximo</td>
-                            <td class="px-4 py-3">
-                                <StatusBadge Status="@GetStockStatus(item)" />
-                            </td>
-                            <td class="px-4 py-3">
-                                <div class="flex gap-2">
-                                    <IconButton Icon="fa-solid fa-edit" 
-                                                ColorScheme="blue" 
-                                                Title="Ajustar" 
-                                                OnClick="@(() => AjustarStock(item.Id))" />
-                                    <IconButton Icon="fa-solid fa-history" 
-                                                ColorScheme="gray" 
-                                                Title="Histórico" 
-                                                OnClick="@(() => VerHistorico(item.Id))" />
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+    <div class="d-flex gap-2">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Balance" OnClick="AjusteStock">
+            Ajuste de Stock
+        </MudButton>
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.SwapHoriz" OnClick="TransferirParaArmazem">
+            Transferir
+        </MudButton>
     </div>
 </div>
+
+<!-- Alertas de Stock -->
+<MudGrid Class="mb-6">
+    <MudItem xs="12" md="4">
+        <MudAlert Severity="Severity.Error" Icon="@Icons.Material.Filled.Warning">
+            <strong>Stock Crítico</strong><br/>5 produtos abaixo do mínimo
+        </MudAlert>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudAlert Severity="Severity.Warning" Icon="@Icons.Material.Filled.Info">
+            <strong>Stock Baixo</strong><br/>12 produtos próximos do mínimo
+        </MudAlert>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudAlert Severity="Severity.Success" Icon="@Icons.Material.Filled.CheckCircle">
+            <strong>Stock Normal</strong><br/>82 produtos em estoque adequado
+        </MudAlert>
+    </MudItem>
+</MudGrid>
+
+<MudPaper Elevation="2" Class="pa-6">
+    <!-- Filtros -->
+    <MudGrid Class="mb-6">
+        <MudItem xs="12" sm="6" md="3">
+            <MudTextField @bind-Value="searchTerm" Label="Pesquisar Produto" Placeholder="Nome ou código..." Variant="Variant.Outlined" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudSelect @bind-Value="categoriaSelecionada" Label="Categoria" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+                <MudSelectItem Value="@("")">Todas</MudSelectItem>
+                <MudSelectItem Value="@("1")">Eletrônicos</MudSelectItem>
+                <MudSelectItem Value="@("2")">Alimentos</MudSelectItem>
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudSelect @bind-Value="situacaoStock" Label="Situação Stock" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+                <MudSelectItem Value="@("")">Todos</MudSelectItem>
+                <MudSelectItem Value="@("critico")">Crítico</MudSelectItem>
+                <MudSelectItem Value="@("baixo")">Baixo</MudSelectItem>
+                <MudSelectItem Value="@("normal")">Normal</MudSelectItem>
+                <MudSelectItem Value="@("excesso")">Excesso</MudSelectItem>
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3" Class="d-flex align-end">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="Filtrar">
+                Filtrar
+            </MudButton>
+        </MudItem>
+    </MudGrid>
+
+    <!-- Tabela de Stock -->
+    <MudTable Items="@produtosStock" Hover="true" Breakpoint="Breakpoint.Sm" Dense="true">
+        <HeaderContent>
+            <MudTh>Código</MudTh>
+            <MudTh>Produto</MudTh>
+            <MudTh>Categoria</MudTh>
+            <MudTh>Stock Atual</MudTh>
+            <MudTh>Stock Mín.</MudTh>
+            <MudTh>Stock Máx.</MudTh>
+            <MudTh>Situação</MudTh>
+            <MudTh>Ações</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Código"><code>@context.Codigo</code></MudTd>
+            <MudTd DataLabel="Produto"><strong>@context.Nome</strong></MudTd>
+            <MudTd DataLabel="Categoria">@context.Categoria</MudTd>
+            <MudTd DataLabel="Stock Atual">
+                <MudText Typo="Typo.body1" Color="@GetStockColor(context)"><strong>@context.StockAtual</strong></MudText>
+            </MudTd>
+            <MudTd DataLabel="Stock Mín.">@context.StockMinimo</MudTd>
+            <MudTd DataLabel="Stock Máx.">@context.StockMaximo</MudTd>
+            <MudTd DataLabel="Situação">
+                @{
+                    var status = GetStockStatus(context);
+                    var color = status == "critico" ? Color.Error : (status == "baixo" ? Color.Warning : Color.Success);
+                    var text = status == "critico" ? "Crítico" : (status == "baixo" ? "Baixo" : "Normal");
+                }
+                <MudChip T="string" Size="Size.Small" Color="@color">@text</MudChip>
+            </MudTd>
+            <MudTd DataLabel="Ações">
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Color="Color.Info" OnClick="@(() => AjustarStock(context.Id))" />
+                <MudIconButton Icon="@Icons.Material.Filled.History" Size="Size.Small" OnClick="@(() => VerHistorico(context.Id))" />
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+</MudPaper>
 
 @code {
     private string searchTerm = "";
@@ -141,11 +124,11 @@
         };
     }
 
-    private string GetStockColorClass(StockProdutoDto item)
+    private Color GetStockColor(StockProdutoDto item)
     {
-        if (item.StockAtual <= item.StockMinimo) return "text-red-600";
-        if (item.StockAtual <= item.StockMinimo * 1.5) return "text-yellow-600";
-        return "text-green-600";
+        if (item.StockAtual <= item.StockMinimo) return Color.Error;
+        if (item.StockAtual <= item.StockMinimo * 1.5) return Color.Warning;
+        return Color.Success;
     }
 
     private string GetStockStatus(StockProdutoDto item)

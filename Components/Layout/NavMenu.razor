@@ -1,235 +1,72 @@
 ﻿@rendermode InteractiveServer
 
-<!-- Sidebar -->
-<aside class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform bg-white border-r border-gray-200" aria-label="Sidebar">
-    <!-- Logo Section -->
-    <div class="h-20 px-4 py-4 border-b border-gray-200 flex items-center justify-center">
-        <div class="flex items-center gap-2">
-            <i class="fa-solid fa-image text-3xl text-gray-400"></i>
-        </div>
-    </div>
-
-    <!-- Menu Section -->
-    <div class="h-[calc(100vh-5rem)] px-3 py-4 overflow-y-auto">
-        <p class="px-3 text-xs font-semibold text-gray-500 uppercase mb-4">Menu Principal</p>
-        
-        <ul class="space-y-1 font-medium">
-            <!-- Dashboard -->
-            <li>
-                <a href="/" class="@GetMenuItemClass(currentPath == "/")" @onclick='() => SetCurrentPath("/")'>
-                    <i class="fa-solid fa-chart-line"></i>
-                    <span class="ml-3">Dashboard</span>
-                </a>
-            </li>
-
-            <!-- Vendas -->
-            <li>
-                <button type="button" class="@GetMenuButtonClass("vendas")" @onclick='() => ToggleMenu("vendas")'>
-                    <i class="fa-solid fa-shopping-cart"></i>
-                    <span class="flex-1 ml-3 text-left whitespace-nowrap">Venda</span>
-                    <i class="fa-solid @(IsMenuOpen("vendas") ? "fa-angle-down" : "fa-angle-right")"></i>
-                </button>
-                @if (IsMenuOpen("vendas"))
-                {
-                    <ul class="py-2 space-y-1">
-                        <li><a href="/venda/nova" class="@GetSubMenuItemClass()" @onclick='() => CloseAllMenus()'>Nova Venda</a></li>
-                        <li><a href="/venda/pendente" class="@GetSubMenuItemClass()" @onclick='() => CloseAllMenus()'>Venda Pendente</a></li>
-                        <li><a href="/venda/realizadas" class="@GetSubMenuItemClass()" @onclick='() => CloseAllMenus()'>Vendas Realizadas Hoje</a></li>
-                        <li><a href="/venda/saidas-hoje" class="@GetSubMenuItemClass()" @onclick='() => CloseAllMenus()'>Saídas de Hoje</a></li>
-                        <li><a href="/venda/saida-geral" class="@GetSubMenuItemClass()" @onclick='() => CloseAllMenus()'>Saída Geral Hoje</a></li>
-                        <li><a href="/venda/todas" class="@GetSubMenuItemClass()" @onclick='() => CloseAllMenus()'>Todas as Vendas</a></li>
-                        <li><a href="/venda/stock-loja" class="@GetSubMenuItemClass()" @onclick='() => CloseAllMenus()'>Gestão de Stock Loja</a></li>
-                        <li><a href="/venda/stock-armazem" class="@GetSubMenuItemClass()" @onclick='() => CloseAllMenus()'>Gestão de Stock Armazém</a></li>
-                        <li><a href="/venda/relatorio" class="@GetSubMenuItemClass()" @onclick='() => CloseAllMenus()'>Relatório de venda</a></li>
-                        <li><a href="/venda/exportar" class="@GetSubMenuItemClass()" @onclick='() => CloseAllMenus()'>Exportar Vendas-Efactura</a></li>
-                    </ul>
-                }
-            </li>
-
-            <!-- Cadastros -->
-            <li>
-                <button type="button" class="@GetMenuButtonClass("cadastros")" @onclick='() => ToggleMenu("cadastros")'>
-                    <i class="fa-solid fa-address-book"></i>
-                    <span class="flex-1 ml-3 text-left whitespace-nowrap">Cadastros</span>
-                    <i class="fa-solid @(IsMenuOpen("cadastros") ? "fa-angle-down" : "fa-angle-right")"></i>
-                </button>
-            </li>
-
-            <!-- Compras -->
-            <li>
-                <button type="button" class="@GetMenuButtonClass("compras")" @onclick='() => ToggleMenu("compras")'>
-                    <i class="fa-solid fa-shopping-bag"></i>
-                    <span class="flex-1 ml-3 text-left whitespace-nowrap">Compras</span>
-                    <i class="fa-solid @(IsMenuOpen("compras") ? "fa-angle-down" : "fa-angle-right")"></i>
-                </button>
-                @if (IsMenuOpen("compras"))
-                {
-                    <ul class="py-2 space-y-1">
-                        <li><a href="/compras/nova" class="@GetSubMenuItemClass()">Novas Compras</a></li>
-                        <li><a href="/compras/relatorio" class="@GetSubMenuItemClass()">Relatório</a></li>
-                    </ul>
-                }
-            </li>
-
-            <!-- Tabelas -->
-            <li>
-                <button type="button" class="@GetMenuButtonClass("tabelas")" @onclick='() => ToggleMenu("tabelas")'>
-                    <i class="fa-solid fa-table"></i>
-                    <span class="flex-1 ml-3 text-left whitespace-nowrap">Tabelas</span>
-                    <i class="fa-solid @(IsMenuOpen("tabelas") ? "fa-angle-down" : "fa-angle-right")"></i>
-                </button>
-            </li>
-
-            <!-- Produtos -->
-            <li>
-                <a href="/produtos" class="@GetMenuItemClass(currentPath == "/produtos")">
-                    <i class="fa-solid fa-box"></i>
-                    <span class="ml-3">Produtos</span>
-                </a>
-            </li>
-
-            <!-- Usuários -->
-            <li>
-                <a href="/usuarios" class="@GetMenuItemClass(currentPath == "/usuarios")">
-                    <i class="fa-solid fa-users"></i>
-                    <span class="ml-3">Usuários</span>
-                </a>
-            </li>
-
-            <!-- Contactos -->
-            <li>
-                <a href="/contactos" class="@GetMenuItemClass(currentPath == "/contactos")">
-                    <i class="fa-solid fa-address-card"></i>
-                    <span class="ml-3">Contactos</span>
-                </a>
-            </li>
-
-            <!-- Despesas -->
-            <li>
-                <a href="/despesas" class="@GetMenuItemClass(currentPath == "/despesas")">
-                    <i class="fa-solid fa-money-bill-wave"></i>
-                    <span class="ml-3">Despesas</span>
-                </a>
-            </li>
-
-            <!-- Receitas -->
-            <li>
-                <a href="/receitas" class="@GetMenuItemClass(currentPath == "/receitas")">
-                    <i class="fa-solid fa-receipt"></i>
-                    <span class="ml-3">Receitas</span>
-                </a>
-            </li>
-
-            <!-- Lojas -->
-            <li>
-                <a href="/lojas" class="@GetMenuItemClass(currentPath == "/lojas")">
-                    <i class="fa-solid fa-store"></i>
-                    <span class="ml-3">Lojas</span>
-                </a>
-            </li>
-
-            <!-- Fornecedores -->
-            <li>
-                <a href="/fornecedores" class="@GetMenuItemClass(currentPath == "/fornecedores")">
-                    <i class="fa-solid fa-truck"></i>
-                    <span class="ml-3">Fornecedores</span>
-                </a>
-            </li>
-
-            <!-- Clientes -->
-            <li>
-                <a href="/clientes" class="@GetMenuItemClass(currentPath == "/clientes")">
-                    <i class="fa-solid fa-user-group"></i>
-                    <span class="ml-3">Clientes</span>
-                </a>
-            </li>
-
-            <!-- Fluxo de Caixa -->
-            <li>
-                <button type="button" class="@GetMenuButtonClass("fluxo-caixa")" @onclick='() => ToggleMenu("fluxo-caixa")'>
-                    <i class="fa-solid fa-cash-register"></i>
-                    <span class="flex-1 ml-3 text-left whitespace-nowrap">Fluxo de Caixa</span>
-                    <i class="fa-solid @(IsMenuOpen("fluxo-caixa") ? "fa-angle-down" : "fa-angle-right")"></i>
-                </button>
-                @if (IsMenuOpen("fluxo-caixa"))
-                {
-                    <ul class="py-2 space-y-1">
-                        <li><a href="/fluxo/movimentar" class="@GetSubMenuItemClass()">Movimentar</a></li>
-                        <li><a href="/fluxo/projecao" class="@GetSubMenuItemClass()">Projecção do F. Caixa</a></li>
-                        <li><a href="/fluxo/relatorio" class="@GetSubMenuItemClass()">Relatório</a></li>
-                        <li><a href="/fluxo/extrato" class="@GetSubMenuItemClass()">Extrato</a></li>
-                    </ul>
-                }
-            </li>
-
-            <!-- Notificações -->
-            <li>
-                <a href="/notificacoes" class="@GetMenuItemClass(currentPath == "/notificacoes")">
-                    <i class="fa-solid fa-bell"></i>
-                    <span class="ml-3">Notificações</span>
-                    <span class="inline-flex items-center justify-center w-6 h-6 text-xs font-semibold text-white bg-red-500 rounded-full ml-auto">
-                        2
-                    </span>
-                </a>
-            </li>
-        </ul>
-
-        <!-- Footer -->
-        <div class="mt-8 pt-4 border-t border-gray-200 text-center text-xs text-gray-500">
-            <p>Sistema Desenvolvido por</p>
-            <p class="font-semibold text-gray-700">Dalton Luís</p>
-            <p>Todos os direitos reservados</p>
-            <p>by © Csc-Lda -> Sistem Solution</p>
-            <p>2022-2025</p>
-        </div>
-    </div>
-</aside>
+<MudNavMenu>
+    <MudText Typo="Typo.caption" Class="px-4 mud-text-secondary">MENU PRINCIPAL</MudText>
+    
+    <MudNavLink Href="/" Icon="@Icons.Material.Filled.Dashboard" IconColor="Color.Primary">Dashboard</MudNavLink>
+    
+    <MudNavGroup Title="Venda" Icon="@Icons.Material.Filled.ShoppingCart" Expanded="@IsMenuOpen("vendas")">
+        <MudNavLink Href="/venda/nova">Nova Venda</MudNavLink>
+        <MudNavLink Href="/venda/pendente">Venda Pendente</MudNavLink>
+        <MudNavLink Href="/venda/realizadas">Vendas Realizadas Hoje</MudNavLink>
+        <MudNavLink Href="/venda/saidas-hoje">Saídas de Hoje</MudNavLink>
+        <MudNavLink Href="/venda/saida-geral">Saída Geral Hoje</MudNavLink>
+        <MudNavLink Href="/venda/todas">Todas as Vendas</MudNavLink>
+        <MudNavLink Href="/venda/stock-loja">Gestão de Stock Loja</MudNavLink>
+        <MudNavLink Href="/venda/stock-armazem">Gestão de Stock Armazém</MudNavLink>
+        <MudNavLink Href="/venda/relatorio">Relatório de venda</MudNavLink>
+        <MudNavLink Href="/venda/exportar">Exportar Vendas-Efactura</MudNavLink>
+    </MudNavGroup>
+    
+    <MudNavGroup Title="Cadastros" Icon="@Icons.Material.Filled.Contacts" Expanded="@IsMenuOpen("cadastros")">
+    </MudNavGroup>
+    
+    <MudNavGroup Title="Compras" Icon="@Icons.Material.Filled.ShoppingBag" Expanded="@IsMenuOpen("compras")">
+        <MudNavLink Href="/compras/nova">Novas Compras</MudNavLink>
+        <MudNavLink Href="/compras/relatorio">Relatório</MudNavLink>
+    </MudNavGroup>
+    
+    <MudNavGroup Title="Tabelas" Icon="@Icons.Material.Filled.TableChart" Expanded="@IsMenuOpen("tabelas")">
+    </MudNavGroup>
+    
+    <MudNavLink Href="/produtos" Icon="@Icons.Material.Filled.Inventory">Produtos</MudNavLink>
+    <MudNavLink Href="/usuarios" Icon="@Icons.Material.Filled.People">Usuários</MudNavLink>
+    <MudNavLink Href="/contactos" Icon="@Icons.Material.Filled.ContactPhone">Contactos</MudNavLink>
+    <MudNavLink Href="/despesas" Icon="@Icons.Material.Filled.AttachMoney">Despesas</MudNavLink>
+    <MudNavLink Href="/receitas" Icon="@Icons.Material.Filled.Receipt">Receitas</MudNavLink>
+    <MudNavLink Href="/lojas" Icon="@Icons.Material.Filled.Store">Lojas</MudNavLink>
+    <MudNavLink Href="/fornecedores" Icon="@Icons.Material.Filled.LocalShipping">Fornecedores</MudNavLink>
+    <MudNavLink Href="/clientes" Icon="@Icons.Material.Filled.Groups">Clientes</MudNavLink>
+    
+    <MudNavGroup Title="Fluxo de Caixa" Icon="@Icons.Material.Filled.AccountBalance" Expanded="@IsMenuOpen("fluxo-caixa")">
+        <MudNavLink Href="/fluxo/movimentar">Movimentar</MudNavLink>
+        <MudNavLink Href="/fluxo/projecao">Projecção do F. Caixa</MudNavLink>
+        <MudNavLink Href="/fluxo/relatorio">Relatório</MudNavLink>
+        <MudNavLink Href="/fluxo/extrato">Extrato</MudNavLink>
+    </MudNavGroup>
+    
+    <MudNavLink Href="/notificacoes" Icon="@Icons.Material.Filled.Notifications">
+        <MudBadge Content="2" Color="Color.Error" Overlap="true" Class="mx-6 my-4">
+            Notificações
+        </MudBadge>
+    </MudNavLink>
+    
+    <MudDivider Class="my-4" />
+    
+    <MudText Typo="Typo.caption" Align="Align.Center" Class="px-4 py-2 mud-text-secondary">
+        Sistema Desenvolvido por<br/>
+        <strong>Dalton Luís</strong><br/>
+        Todos os direitos reservados<br/>
+        by © Csc-Lda -> Sistem Solution<br/>
+        2022-2025
+    </MudText>
+</MudNavMenu>
 
 @code {
-    private HashSet<string> openMenus = new HashSet<string>();
-    private string currentPath = "/";
-
-    private void ToggleMenu(string menuName)
-    {
-        if (openMenus.Contains(menuName))
-        {
-            openMenus.Remove(menuName);
-        }
-        else
-        {
-            openMenus.Add(menuName);
-        }
-    }
+    private HashSet<string> openMenus = new HashSet<string> { "vendas" };
 
     private bool IsMenuOpen(string menuName)
     {
         return openMenus.Contains(menuName);
-    }
-
-    private void SetCurrentPath(string path)
-    {
-        currentPath = path;
-    }
-
-    private void CloseAllMenus()
-    {
-        openMenus.Clear();
-    }
-
-    private string GetMenuItemClass(bool isActive)
-    {
-        var baseClasses = "flex items-center p-2 text-gray-900 rounded-lg hover:bg-orange-100 group w-full";
-        return isActive ? $"{baseClasses} bg-orange-50 text-orange-600" : baseClasses;
-    }
-
-    private string GetMenuButtonClass(string menuName)
-    {
-        var baseClasses = "flex items-center w-full p-2 text-gray-900 rounded-lg hover:bg-orange-100 group";
-        return IsMenuOpen(menuName) ? $"{baseClasses} bg-orange-50 text-orange-600" : baseClasses;
-    }
-
-    private string GetSubMenuItemClass()
-    {
-        return "flex items-center w-full p-2 pl-11 text-sm text-gray-700 rounded-lg hover:bg-orange-50 hover:text-orange-600";
     }
 }

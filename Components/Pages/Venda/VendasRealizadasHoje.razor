@@ -1,115 +1,122 @@
 @page "/venda/realizadas"
 @rendermode InteractiveServer
-@using BillingSystem.Components.Shared
 
 <PageTitle>Vendas Realizadas Hoje - Sistema de Faturação</PageTitle>
 
-<div class="p-6 bg-gray-50 min-h-screen">
-    <div class="mb-6 flex justify-between items-center">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">Vendas Realizadas Hoje</h1>
-            <p class="text-gray-600">@DateTime.Now.ToString("dd/MM/yyyy")</p>
-        </div>
-        <ActionButton Icon="fa-solid fa-file-excel" 
-                      Text="Exportar" 
-                      Variant="success" 
-                      OnClick="ExportarVendas" />
+<div class="d-flex justify-space-between align-center mb-6">
+    <div>
+        <MudText Typo="Typo.h4">Vendas Realizadas Hoje</MudText>
+        <MudText Typo="Typo.body2" Color="Color.Secondary">@DateTime.Now.ToString("dd/MM/yyyy")</MudText>
     </div>
-
-    <!-- Estatísticas Rápidas -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <StatCard Label="Total de Vendas" 
-                  Value="@totalVendas.ToString()" 
-                  Icon="fa-solid fa-shopping-cart" />
-        
-        <StatCard Label="Valor Total" 
-                  Value="@($"{valorTotal:N2} €")" 
-                  ValueColor="green"
-                  Icon="fa-solid fa-dollar-sign" />
-        
-        <StatCard Label="Ticket Médio" 
-                  Value="@($"{ticketMedio:N2} €")" 
-                  ValueColor="blue"
-                  Icon="fa-solid fa-chart-line" />
-        
-        <StatCard Label="Produtos Vendidos" 
-                  Value="@produtosVendidos.ToString()" 
-                  ValueColor="orange"
-                  Icon="fa-solid fa-box" />
-    </div>
-
-    <div class="bg-white rounded-lg shadow p-6">
-        <!-- Filtros Rápidos -->
-        <div class="flex gap-4 mb-6">
-            <button @onclick="@(() => FiltrarPorStatus(null))" class="@GetFilterButtonClass(null)">
-                Todas
-            </button>
-            <button @onclick="@(() => FiltrarPorStatus("pago"))" class="@GetFilterButtonClass("pago")">
-                Pagas
-            </button>
-            <button @onclick="@(() => FiltrarPorStatus("pendente"))" class="@GetFilterButtonClass("pendente")">
-                Pendentes
-            </button>
-        </div>
-
-        <!-- Tabela de Vendas -->
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Hora</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Cliente</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Produtos</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Total</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Pagamento</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Status</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (vendasFiltradas.Count == 0)
-                    {
-                        <EmptyState Colspan="7" 
-                                    Message="Nenhuma venda realizada hoje" 
-                                    Icon="fa-solid fa-inbox" />
-                    }
-                    else
-                    {
-                        @foreach (var venda in vendasFiltradas)
-                        {
-                            <tr class="border-b border-gray-200 hover:bg-gray-50">
-                                <td class="px-4 py-3 text-sm">@venda.Hora.ToString("HH:mm")</td>
-                                <td class="px-4 py-3 text-sm font-medium">@venda.Cliente</td>
-                                <td class="px-4 py-3 text-sm">@venda.QuantidadeProdutos itens</td>
-                                <td class="px-4 py-3 text-sm font-bold text-gray-800">@venda.Total.ToString("N2") €</td>
-                                <td class="px-4 py-3 text-sm">@venda.FormaPagamento</td>
-                                <td class="px-4 py-3">
-                                    <StatusBadge Status="@venda.Status" />
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="flex gap-2">
-                                        <IconButton Icon="fa-solid fa-eye" 
-                                                    ColorScheme="blue" 
-                                                    Title="Detalhes" 
-                                                    OnClick="@(() => VisualizarDetalhes(venda.Id))" />
-                                        <IconButton Icon="fa-solid fa-print" 
-                                                    ColorScheme="gray" 
-                                                    Title="Imprimir" 
-                                                    OnClick="@(() => ImprimirRecibo(venda.Id))" />
-                                        <IconButton Icon="fa-solid fa-times-circle" 
-                                                    ColorScheme="red" 
-                                                    Title="Cancelar" 
-                                                    OnClick="@(() => CancelarVenda(venda.Id))" />
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.FileDownload" OnClick="ExportarVendas">
+        Exportar
+    </MudButton>
 </div>
+
+<!-- Estatísticas Rápidas -->
+<MudGrid Class="mb-6">
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Elevation="2" Class="pa-4">
+            <div class="d-flex justify-space-between align-center">
+                <div>
+                    <MudText Typo="Typo.caption" Color="Color.Secondary">Total de Vendas</MudText>
+                    <MudText Typo="Typo.h4">@totalVendas</MudText>
+                </div>
+                <MudIcon Icon="@Icons.Material.Filled.ShoppingCart" Size="Size.Large" Color="Color.Primary" />
+            </div>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Elevation="2" Class="pa-4">
+            <div class="d-flex justify-space-between align-center">
+                <div>
+                    <MudText Typo="Typo.caption" Color="Color.Secondary">Valor Total</MudText>
+                    <MudText Typo="Typo.h4" Color="Color.Success">@($"{valorTotal:N2} €")</MudText>
+                </div>
+                <MudIcon Icon="@Icons.Material.Filled.EuroSymbol" Size="Size.Large" Color="Color.Success" />
+            </div>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Elevation="2" Class="pa-4">
+            <div class="d-flex justify-space-between align-center">
+                <div>
+                    <MudText Typo="Typo.caption" Color="Color.Secondary">Ticket Médio</MudText>
+                    <MudText Typo="Typo.h4" Color="Color.Info">@($"{ticketMedio:N2} €")</MudText>
+                </div>
+                <MudIcon Icon="@Icons.Material.Filled.TrendingUp" Size="Size.Large" Color="Color.Info" />
+            </div>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Elevation="2" Class="pa-4">
+            <div class="d-flex justify-space-between align-center">
+                <div>
+                    <MudText Typo="Typo.caption" Color="Color.Secondary">Produtos Vendidos</MudText>
+                    <MudText Typo="Typo.h4" Color="Color.Warning">@produtosVendidos</MudText>
+                </div>
+                <MudIcon Icon="@Icons.Material.Filled.Inventory" Size="Size.Large" Color="Color.Warning" />
+            </div>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+<MudPaper Elevation="2" Class="pa-6">
+    <!-- Filtros Rápidos -->
+    <MudButtonGroup Class="mb-6" Color="Color.Primary" Variant="Variant.Outlined">
+        <MudButton OnClick="@(() => FiltrarPorStatus(null))" Variant="@(statusFiltro == null ? Variant.Filled : Variant.Outlined)">
+            Todas
+        </MudButton>
+        <MudButton OnClick="@(() => FiltrarPorStatus("pago"))" Variant="@(statusFiltro == "pago" ? Variant.Filled : Variant.Outlined)">
+            Pagas
+        </MudButton>
+        <MudButton OnClick="@(() => FiltrarPorStatus("pendente"))" Variant="@(statusFiltro == "pendente" ? Variant.Filled : Variant.Outlined)">
+            Pendentes
+        </MudButton>
+    </MudButtonGroup>
+
+    <!-- Tabela de Vendas -->
+    <MudTable Items="@vendasFiltradas" Hover="true" Breakpoint="Breakpoint.Sm" Dense="true">
+        <HeaderContent>
+            <MudTh>Hora</MudTh>
+            <MudTh>Cliente</MudTh>
+            <MudTh>Produtos</MudTh>
+            <MudTh>Total</MudTh>
+            <MudTh>Pagamento</MudTh>
+            <MudTh>Status</MudTh>
+            <MudTh>Ações</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Hora">@context.Hora.ToString("HH:mm")</MudTd>
+            <MudTd DataLabel="Cliente">@context.Cliente</MudTd>
+            <MudTd DataLabel="Produtos">@context.QuantidadeProdutos itens</MudTd>
+            <MudTd DataLabel="Total"><strong>@context.Total.ToString("N2") €</strong></MudTd>
+            <MudTd DataLabel="Pagamento">@context.FormaPagamento</MudTd>
+            <MudTd DataLabel="Status">
+                @if (context.Status == "pago")
+                {
+                    <MudChip T="string" Size="Size.Small" Color="Color.Success">Pago</MudChip>
+                }
+                else
+                {
+                    <MudChip T="string" Size="Size.Small" Color="Color.Warning">Pendente</MudChip>
+                }
+            </MudTd>
+            <MudTd DataLabel="Ações">
+                <MudIconButton Icon="@Icons.Material.Filled.Visibility" Size="Size.Small" Color="Color.Info" OnClick="@(() => VisualizarDetalhes(context.Id))" />
+                <MudIconButton Icon="@Icons.Material.Filled.Print" Size="Size.Small" OnClick="@(() => ImprimirRecibo(context.Id))" />
+                <MudIconButton Icon="@Icons.Material.Filled.Cancel" Size="Size.Small" Color="Color.Error" OnClick="@(() => CancelarVenda(context.Id))" />
+            </MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText Typo="Typo.body1" Align="Align.Center" Class="py-8">
+                <MudIcon Icon="@Icons.Material.Filled.Inbox" Size="Size.Large" Class="mb-2" />
+                <br />
+                Nenhuma venda realizada hoje
+            </MudText>
+        </NoRecordsContent>
+    </MudTable>
+</MudPaper>
 
 @code {
     private List<VendaRealizadaDto> vendas = new();
@@ -145,14 +152,6 @@
             ? vendas 
             : vendas.Where(v => v.Status == status).ToList();
         CalcularEstatisticas();
-    }
-
-    private string GetFilterButtonClass(string? status)
-    {
-        var baseClass = "px-4 py-2 rounded-lg font-medium transition-colors";
-        return statusFiltro == status 
-            ? $"{baseClass} bg-orange-500 text-white" 
-            : $"{baseClass} bg-gray-100 text-gray-700 hover:bg-gray-200";
     }
 
     private void CalcularEstatisticas()

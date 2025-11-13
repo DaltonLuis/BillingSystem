@@ -1,162 +1,150 @@
 @page "/venda/relatorio"
 @rendermode InteractiveServer
-@using BillingSystem.Components.Shared
 
 <PageTitle>Relatório de Vendas - Sistema de Faturação</PageTitle>
 
-<div class="p-6 bg-gray-50 min-h-screen">
-    <div class="mb-6">
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">Relatório de Vendas</h1>
-        <p class="text-gray-600">Análise detalhada e relatórios de vendas</p>
-    </div>
+<MudText Typo="Typo.h4" Class="mb-2">Relatório de Vendas</MudText>
+<MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-6">Análise detalhada e relatórios de vendas</MudText>
 
-    <!-- Filtros de Período -->
-    <div class="bg-white rounded-lg shadow p-6 mb-6">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Data Inicial</label>
-                <input type="date" @bind="dataInicial" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Data Final</label>
-                <input type="date" @bind="dataFinal" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Agrupar Por</label>
-                <select @bind="agruparPor" class="w-full border border-gray-300 rounded-lg px-4 py-2">
-                    <option value="dia">Dia</option>
-                    <option value="semana">Semana</option>
-                    <option value="mes">Mês</option>
-                    <option value="produto">Produto</option>
-                    <option value="cliente">Cliente</option>
-                </select>
-            </div>
-            <div class="flex items-end gap-2">
-                <ActionButton Icon="fa-solid fa-chart-bar" 
-                              Text="Gerar" 
-                              OnClick="GerarRelatorio" 
-                              class="flex-1" />
-                <ActionButton Icon="fa-solid fa-file-pdf" 
-                              Variant="danger" 
-                              OnClick="ExportarPDF" 
-                              Title="Exportar PDF" />
-            </div>
-        </div>
-    </div>
+<!-- Filtros de Período -->
+<MudPaper Elevation="2" Class="pa-6 mb-6">
+    <MudGrid>
+        <MudItem xs="12" sm="6" md="3">
+            <MudDatePicker @bind-Date="dataInicial" Label="Data Inicial" Variant="Variant.Outlined" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudDatePicker @bind-Date="dataFinal" Label="Data Final" Variant="Variant.Outlined" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudSelect @bind-Value="agruparPor" Label="Agrupar Por" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+                <MudSelectItem Value="@("dia")">Dia</MudSelectItem>
+                <MudSelectItem Value="@("semana")">Semana</MudSelectItem>
+                <MudSelectItem Value="@("mes")">Mês</MudSelectItem>
+                <MudSelectItem Value="@("produto")">Produto</MudSelectItem>
+                <MudSelectItem Value="@("cliente")">Cliente</MudSelectItem>
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3" Class="d-flex align-end gap-2">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.BarChart" OnClick="GerarRelatorio" Class="flex-1">
+                Gerar
+            </MudButton>
+            <MudIconButton Icon="@Icons.Material.Filled.PictureAsPdf" Color="Color.Error" OnClick="ExportarPDF" />
+        </MudItem>
+    </MudGrid>
+</MudPaper>
 
-    <!-- Cards de Resumo -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <StatCard Label="Total Faturado" 
-                  Value="@($"{totalFaturado:N2} €")" 
-                  Subtitle="↑ 12% vs período anterior" 
-                  CardStyle="gradient-blue" />
-        
-        <StatCard Label="Vendas Realizadas" 
-                  Value="@totalVendas.ToString()" 
-                  Subtitle="↑ 8% vs período anterior" 
-                  CardStyle="gradient-green" />
-        
-        <StatCard Label="Ticket Médio" 
-                  Value="@($"{ticketMedio:N2} €")" 
-                  Subtitle="↑ 4% vs período anterior" 
-                  CardStyle="gradient-orange" />
-        
-        <StatCard Label="Produtos Vendidos" 
-                  Value="@produtosVendidos.ToString()" 
-                  Subtitle="↑ 15% vs período anterior" 
-                  CardStyle="gradient-purple" />
-    </div>
+<!-- Cards de Resumo -->
+<MudGrid Class="mb-6">
+    <MudItem xs="12" sm="6" md="3">
+        <MudCard Elevation="2" Class="mud-theme-primary">
+            <MudCardContent Class="pa-4" Style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <MudText Typo="Typo.caption">Total Faturado</MudText>
+                <MudText Typo="Typo.h4" Class="my-2">@($"{totalFaturado:N2} €")</MudText>
+                <MudText Typo="Typo.caption">↑ 12% vs período anterior</MudText>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <MudCard Elevation="2">
+            <MudCardContent Class="pa-4" Style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                <MudText Typo="Typo.caption">Vendas Realizadas</MudText>
+                <MudText Typo="Typo.h4" Class="my-2">@totalVendas</MudText>
+                <MudText Typo="Typo.caption">↑ 8% vs período anterior</MudText>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <MudCard Elevation="2">
+            <MudCardContent Class="pa-4" Style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white;">
+                <MudText Typo="Typo.caption">Ticket Médio</MudText>
+                <MudText Typo="Typo.h4" Class="my-2">@($"{ticketMedio:N2} €")</MudText>
+                <MudText Typo="Typo.caption">↑ 4% vs período anterior</MudText>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <MudCard Elevation="2">
+            <MudCardContent Class="pa-4" Style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); color: white;">
+                <MudText Typo="Typo.caption">Produtos Vendidos</MudText>
+                <MudText Typo="Typo.h4" Class="my-2">@produtosVendidos</MudText>
+                <MudText Typo="Typo.caption">↑ 15% vs período anterior</MudText>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+</MudGrid>
 
-    <!-- Gráficos -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <!-- Gráfico de Vendas por Período -->
-        <div class="bg-white rounded-lg shadow p-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">Vendas por Período</h3>
-            <div class="h-64 flex items-center justify-center bg-gray-50 rounded">
-                <p class="text-gray-400">Gráfico de Linha (Integração Chart.js)</p>
+<!-- Gráficos -->
+<MudGrid Class="mb-6">
+    <MudItem xs="12" lg="6">
+        <MudPaper Elevation="2" Class="pa-6">
+            <MudText Typo="Typo.h6" Class="mb-4">Vendas por Período</MudText>
+            <div style="height: 256px; display: flex; align-items: center; justify-content: center; background-color: #f5f5f5; border-radius: 4px;">
+                <MudText Typo="Typo.body1" Color="Color.Secondary">Gráfico de Linha (Integração Chart.js)</MudText>
             </div>
-        </div>
-
-        <!-- Gráfico de Formas de Pagamento -->
-        <div class="bg-white rounded-lg shadow p-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">Formas de Pagamento</h3>
-            <div class="h-64 flex items-center justify-center bg-gray-50 rounded">
-                <p class="text-gray-400">Gráfico de Pizza (Integração Chart.js)</p>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" lg="6">
+        <MudPaper Elevation="2" Class="pa-6">
+            <MudText Typo="Typo.h6" Class="mb-4">Formas de Pagamento</MudText>
+            <div style="height: 256px; display: flex; align-items: center; justify-content: center; background-color: #f5f5f5; border-radius: 4px;">
+                <MudText Typo="Typo.body1" Color="Color.Secondary">Gráfico de Pizza (Integração Chart.js)</MudText>
             </div>
-        </div>
-    </div>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
 
-    <!-- Top Produtos -->
-    <div class="bg-white rounded-lg shadow p-6 mb-6">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Top 10 Produtos Mais Vendidos</h3>
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">#</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Produto</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Quantidade</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Valor Total</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Participação</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for (int i = 1; i <= 5; i++)
-                    {
-                        <tr class="border-b border-gray-200 hover:bg-gray-50">
-                            <td class="px-4 py-3 text-sm font-bold">@i</td>
-                            <td class="px-4 py-3 text-sm">Produto @i</td>
-                            <td class="px-4 py-3 text-sm">@((50 - i * 5)) unidades</td>
-                            <td class="px-4 py-3 text-sm font-semibold">@((1000 - i * 100)).00 €</td>
-                            <td class="px-4 py-3">
-                                <div class="flex items-center gap-2">
-                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
-                                        <div class="bg-orange-500 h-2 rounded-full" style="width: @((100 - i * 10))%"></div>
-                                    </div>
-                                    <span class="text-sm text-gray-600">@((100 - i * 10))%</span>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
+<!-- Top Produtos -->
+<MudPaper Elevation="2" Class="pa-6 mb-6">
+    <MudText Typo="Typo.h6" Class="mb-4">Top 10 Produtos Mais Vendidos</MudText>
+    <MudTable Items="@topProdutos" Hover="true" Breakpoint="Breakpoint.Sm" Dense="true">
+        <HeaderContent>
+            <MudTh>#</MudTh>
+            <MudTh>Produto</MudTh>
+            <MudTh>Quantidade</MudTh>
+            <MudTh>Valor Total</MudTh>
+            <MudTh>Participação</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="#"><strong>@context.Posicao</strong></MudTd>
+            <MudTd DataLabel="Produto">@context.Nome</MudTd>
+            <MudTd DataLabel="Quantidade">@context.Quantidade unidades</MudTd>
+            <MudTd DataLabel="Valor Total"><strong>@context.ValorTotal.ToString("N2") €</strong></MudTd>
+            <MudTd DataLabel="Participação">
+                <div class="d-flex align-center gap-2">
+                    <MudProgressLinear Color="Color.Primary" Value="@context.Percentual" Class="flex-1" />
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">@context.Percentual%</MudText>
+                </div>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+</MudPaper>
 
-    <!-- Top Clientes -->
-    <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Top 10 Clientes</h3>
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">#</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Cliente</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Compras</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Valor Total</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Ticket Médio</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for (int i = 1; i <= 5; i++)
-                    {
-                        <tr class="border-b border-gray-200 hover:bg-gray-50">
-                            <td class="px-4 py-3 text-sm font-bold">@i</td>
-                            <td class="px-4 py-3 text-sm font-medium">Cliente @i</td>
-                            <td class="px-4 py-3 text-sm">@((20 - i * 2)) vendas</td>
-                            <td class="px-4 py-3 text-sm font-semibold text-green-600">@((5000 - i * 500)).00 €</td>
-                            <td class="px-4 py-3 text-sm">@(((5000 - i * 500) / (20 - i * 2)).ToString("N2")) €</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+<!-- Top Clientes -->
+<MudPaper Elevation="2" Class="pa-6">
+    <MudText Typo="Typo.h6" Class="mb-4">Top 10 Clientes</MudText>
+    <MudTable Items="@topClientes" Hover="true" Breakpoint="Breakpoint.Sm" Dense="true">
+        <HeaderContent>
+            <MudTh>#</MudTh>
+            <MudTh>Cliente</MudTh>
+            <MudTh>Compras</MudTh>
+            <MudTh>Valor Total</MudTh>
+            <MudTh>Ticket Médio</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="#"><strong>@context.Posicao</strong></MudTd>
+            <MudTd DataLabel="Cliente"><strong>@context.Nome</strong></MudTd>
+            <MudTd DataLabel="Compras">@context.Compras vendas</MudTd>
+            <MudTd DataLabel="Valor Total">
+                <MudText Typo="Typo.body1" Color="Color.Success"><strong>@context.ValorTotal.ToString("N2") €</strong></MudText>
+            </MudTd>
+            <MudTd DataLabel="Ticket Médio">@context.TicketMedio.ToString("N2") €</MudTd>
+        </RowTemplate>
+    </MudTable>
+</MudPaper>
 
 @code {
-    private DateTime dataInicial = DateTime.Now.AddMonths(-1);
-    private DateTime dataFinal = DateTime.Now;
+    private DateTime? dataInicial = DateTime.Now.AddMonths(-1);
+    private DateTime? dataFinal = DateTime.Now;
     private string agruparPor = "dia";
     
     private decimal totalFaturado = 15780.50m;
@@ -164,13 +152,48 @@
     private decimal ticketMedio = 101.16m;
     private int produtosVendidos = 487;
 
-    private void GerarRelatorio()
+    private List<TopProdutoDto> topProdutos = new();
+    private List<TopClienteDto> topClientes = new();
+
+    protected override void OnInitialized()
     {
-        // Gerar relatório com filtros aplicados
+        topProdutos = Enumerable.Range(1, 5).Select(i => new TopProdutoDto
+        {
+            Posicao = i,
+            Nome = $"Produto {i}",
+            Quantidade = 50 - i * 5,
+            ValorTotal = 1000 - i * 100,
+            Percentual = 100 - i * 10
+        }).ToList();
+
+        topClientes = Enumerable.Range(1, 5).Select(i => new TopClienteDto
+        {
+            Posicao = i,
+            Nome = $"Cliente {i}",
+            Compras = 20 - i * 2,
+            ValorTotal = 5000 - i * 500,
+            TicketMedio = (5000 - i * 500) / (20 - i * 2)
+        }).ToList();
     }
 
-    private void ExportarPDF()
+    private void GerarRelatorio() { }
+    private void ExportarPDF() { }
+
+    public class TopProdutoDto
     {
-        // Exportar relatório em PDF
+        public int Posicao { get; set; }
+        public string Nome { get; set; } = "";
+        public int Quantidade { get; set; }
+        public decimal ValorTotal { get; set; }
+        public int Percentual { get; set; }
+    }
+
+    public class TopClienteDto
+    {
+        public int Posicao { get; set; }
+        public string Nome { get; set; } = "";
+        public int Compras { get; set; }
+        public decimal ValorTotal { get; set; }
+        public decimal TicketMedio { get; set; }
     }
 }

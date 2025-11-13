@@ -1,160 +1,142 @@
 @page "/venda/todas"
 @rendermode InteractiveServer
-@using BillingSystem.Components.Shared
 
 <PageTitle>Todas as Vendas - Sistema de Faturação</PageTitle>
 
-<div class="p-6 bg-gray-50 min-h-screen">
-    <div class="mb-6">
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">Todas as Vendas</h1>
-        <p class="text-gray-600">Histórico completo de vendas do sistema</p>
-    </div>
+<MudText Typo="Typo.h4" Class="mb-2">Todas as Vendas</MudText>
+<MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-6">Histórico completo de vendas do sistema</MudText>
 
-    <div class="bg-white rounded-lg shadow p-6">
-        <!-- Filtros Avançados -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Período</label>
-                <select @bind="periodoSelecionado" @bind:after="AplicarFiltros" class="w-full border border-gray-300 rounded-lg px-4 py-2">
-                    <option value="hoje">Hoje</option>
-                    <option value="semana">Esta Semana</option>
-                    <option value="mes">Este Mês</option>
-                    <option value="trimestre">Último Trimestre</option>
-                    <option value="ano">Este Ano</option>
-                    <option value="personalizado">Personalizado</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Cliente</label>
-                <select @bind="clienteSelecionado" @bind:after="AplicarFiltros" class="w-full border border-gray-300 rounded-lg px-4 py-2">
-                    <option value="">Todos os Clientes</option>
-                    <option value="1">João Silva</option>
-                    <option value="2">Maria Santos</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                <select @bind="statusSelecionado" @bind:after="AplicarFiltros" class="w-full border border-gray-300 rounded-lg px-4 py-2">
-                    <option value="">Todos</option>
-                    <option value="pago">Pago</option>
-                    <option value="pendente">Pendente</option>
-                    <option value="cancelado">Cancelado</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Forma de Pagamento</label>
-                <select @bind="pagamentoSelecionado" @bind:after="AplicarFiltros" class="w-full border border-gray-300 rounded-lg px-4 py-2">
-                    <option value="">Todas</option>
-                    <option value="dinheiro">Dinheiro</option>
-                    <option value="cartao">Cartão</option>
-                    <option value="transferencia">Transferência</option>
-                    <option value="multicaixa">Multicaixa</option>
-                </select>
-            </div>
-        </div>
+<MudPaper Elevation="2" Class="pa-6">
+    <!-- Filtros Avançados -->
+    <MudGrid Class="mb-6">
+        <MudItem xs="12" sm="6" md="3">
+            <MudSelect @bind-Value="periodoSelecionado" Label="Período" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+                <MudSelectItem Value="@("hoje")">Hoje</MudSelectItem>
+                <MudSelectItem Value="@("semana")">Esta Semana</MudSelectItem>
+                <MudSelectItem Value="@("mes")">Este Mês</MudSelectItem>
+                <MudSelectItem Value="@("trimestre")">Último Trimestre</MudSelectItem>
+                <MudSelectItem Value="@("ano")">Este Ano</MudSelectItem>
+                <MudSelectItem Value="@("personalizado")">Personalizado</MudSelectItem>
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudSelect @bind-Value="clienteSelecionado" Label="Cliente" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+                <MudSelectItem Value="@("")">Todos os Clientes</MudSelectItem>
+                <MudSelectItem Value="@("1")">João Silva</MudSelectItem>
+                <MudSelectItem Value="@("2")">Maria Santos</MudSelectItem>
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudSelect @bind-Value="statusSelecionado" Label="Status" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+                <MudSelectItem Value="@("")">Todos</MudSelectItem>
+                <MudSelectItem Value="@("pago")">Pago</MudSelectItem>
+                <MudSelectItem Value="@("pendente")">Pendente</MudSelectItem>
+                <MudSelectItem Value="@("cancelado")">Cancelado</MudSelectItem>
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudSelect @bind-Value="pagamentoSelecionado" Label="Forma de Pagamento" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+                <MudSelectItem Value="@("")">Todas</MudSelectItem>
+                <MudSelectItem Value="@("dinheiro")">Dinheiro</MudSelectItem>
+                <MudSelectItem Value="@("cartao")">Cartão</MudSelectItem>
+                <MudSelectItem Value="@("transferencia")">Transferência</MudSelectItem>
+                <MudSelectItem Value="@("multicaixa")">Multicaixa</MudSelectItem>
+            </MudSelect>
+        </MudItem>
+    </MudGrid>
 
-        <!-- Estatísticas do Período -->
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6 p-4 bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg">
-            <div>
-                <p class="text-xs text-gray-600 mb-1">Total Vendas</p>
-                <p class="text-2xl font-bold text-gray-800">@vendasFiltradas.Count</p>
-            </div>
-            <div>
-                <p class="text-xs text-gray-600 mb-1">Valor Total</p>
-                <p class="text-2xl font-bold text-green-600">@vendasFiltradas.Sum(v => v.Total).ToString("N2") €</p>
-            </div>
-            <div>
-                <p class="text-xs text-gray-600 mb-1">Pagas</p>
-                <p class="text-2xl font-bold text-green-600">@vendasFiltradas.Count(v => v.Status == "pago")</p>
-            </div>
-            <div>
-                <p class="text-xs text-gray-600 mb-1">Pendentes</p>
-                <p class="text-2xl font-bold text-yellow-600">@vendasFiltradas.Count(v => v.Status == "pendente")</p>
-            </div>
-            <div>
-                <p class="text-xs text-gray-600 mb-1">Canceladas</p>
-                <p class="text-2xl font-bold text-red-600">@vendasFiltradas.Count(v => v.Status == "cancelado")</p>
-            </div>
-        </div>
+    <!-- Estatísticas do Período -->
+    <MudAlert Severity="Severity.Normal" Class="mb-6" NoIcon="true">
+        <MudGrid>
+            <MudItem xs="12" sm="6" md="2">
+                <MudText Typo="Typo.caption" Color="Color.Secondary">Total Vendas</MudText>
+                <MudText Typo="Typo.h5">@vendasFiltradas.Count</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="2">
+                <MudText Typo="Typo.caption" Color="Color.Secondary">Valor Total</MudText>
+                <MudText Typo="Typo.h5" Color="Color.Success">@vendasFiltradas.Sum(v => v.Total).ToString("N2") €</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="4" md="2">
+                <MudText Typo="Typo.caption" Color="Color.Secondary">Pagas</MudText>
+                <MudText Typo="Typo.h5" Color="Color.Success">@vendasFiltradas.Count(v => v.Status == "pago")</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="4" md="2">
+                <MudText Typo="Typo.caption" Color="Color.Secondary">Pendentes</MudText>
+                <MudText Typo="Typo.h5" Color="Color.Warning">@vendasFiltradas.Count(v => v.Status == "pendente")</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="4" md="2">
+                <MudText Typo="Typo.caption" Color="Color.Secondary">Canceladas</MudText>
+                <MudText Typo="Typo.h5" Color="Color.Error">@vendasFiltradas.Count(v => v.Status == "cancelado")</MudText>
+            </MudItem>
+        </MudGrid>
+    </MudAlert>
 
-        <!-- Tabela de Vendas -->
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">ID</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Data/Hora</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Cliente</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Total</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Pagamento</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Status</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Usuário</th>
-                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (vendasFiltradas.Count == 0)
-                    {
-                        <EmptyState Colspan="8" 
-                                    Message="Nenhuma venda encontrada com os filtros selecionados" 
-                                    Icon="fa-solid fa-search" />
-                    }
-                    else
-                    {
-                        @foreach (var venda in vendasPaginadas)
-                        {
-                            <tr class="border-b border-gray-200 hover:bg-gray-50">
-                                <td class="px-4 py-3 text-sm font-mono">#@venda.Id.ToString("D5")</td>
-                                <td class="px-4 py-3 text-sm">
-                                    <div>@venda.Data.ToString("dd/MM/yyyy")</div>
-                                    <div class="text-xs text-gray-500">@venda.Data.ToString("HH:mm")</div>
-                                </td>
-                                <td class="px-4 py-3 text-sm font-medium">@venda.Cliente</td>
-                                <td class="px-4 py-3 text-sm font-bold">@venda.Total.ToString("N2") €</td>
-                                <td class="px-4 py-3 text-sm">@venda.FormaPagamento</td>
-                                <td class="px-4 py-3">
-                                    <StatusBadge Status="@venda.Status" />
-                                </td>
-                                <td class="px-4 py-3 text-sm">@venda.Usuario</td>
-                                <td class="px-4 py-3">
-                                    <div class="flex gap-2">
-                                        <IconButton Icon="fa-solid fa-eye" 
-                                                    ColorScheme="blue" 
-                                                    Title="Detalhes" 
-                                                    OnClick="@(() => VisualizarDetalhes(venda.Id))" />
-                                        <IconButton Icon="fa-solid fa-print" 
-                                                    ColorScheme="gray" 
-                                                    Title="Imprimir" 
-                                                    OnClick="@(() => ImprimirVenda(venda.Id))" />
-                                        <IconButton Icon="fa-solid fa-copy" 
-                                                    ColorScheme="green" 
-                                                    Title="Duplicar" 
-                                                    OnClick="@(() => DuplicarVenda(venda.Id))" />
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    }
-                </tbody>
-            </table>
-        </div>
+    <!-- Tabela de Vendas -->
+    <MudTable Items="@vendasPaginadas" Hover="true" Breakpoint="Breakpoint.Sm" Dense="true">
+        <HeaderContent>
+            <MudTh>ID</MudTh>
+            <MudTh>Data/Hora</MudTh>
+            <MudTh>Cliente</MudTh>
+            <MudTh>Total</MudTh>
+            <MudTh>Pagamento</MudTh>
+            <MudTh>Status</MudTh>
+            <MudTh>Usuário</MudTh>
+            <MudTh>Ações</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="ID"><code>#@context.Id.ToString("D5")</code></MudTd>
+            <MudTd DataLabel="Data/Hora">
+                <div>@context.Data.ToString("dd/MM/yyyy")</div>
+                <MudText Typo="Typo.caption" Color="Color.Secondary">@context.Data.ToString("HH:mm")</MudText>
+            </MudTd>
+            <MudTd DataLabel="Cliente"><strong>@context.Cliente</strong></MudTd>
+            <MudTd DataLabel="Total"><strong>@context.Total.ToString("N2") €</strong></MudTd>
+            <MudTd DataLabel="Pagamento">@context.FormaPagamento</MudTd>
+            <MudTd DataLabel="Status">
+                @if (context.Status == "pago")
+                {
+                    <MudChip T="string" Size="Size.Small" Color="Color.Success">Pago</MudChip>
+                }
+                else if (context.Status == "pendente")
+                {
+                    <MudChip T="string" Size="Size.Small" Color="Color.Warning">Pendente</MudChip>
+                }
+                else
+                {
+                    <MudChip T="string" Size="Size.Small" Color="Color.Error">Cancelado</MudChip>
+                }
+            </MudTd>
+            <MudTd DataLabel="Usuário">@context.Usuario</MudTd>
+            <MudTd DataLabel="Ações">
+                <MudIconButton Icon="@Icons.Material.Filled.Visibility" Size="Size.Small" Color="Color.Info" OnClick="@(() => VisualizarDetalhes(context.Id))" />
+                <MudIconButton Icon="@Icons.Material.Filled.Print" Size="Size.Small" OnClick="@(() => ImprimirVenda(context.Id))" />
+                <MudIconButton Icon="@Icons.Material.Filled.ContentCopy" Size="Size.Small" Color="Color.Success" OnClick="@(() => DuplicarVenda(context.Id))" />
+            </MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText Typo="Typo.body1" Align="Align.Center" Class="py-8">
+                <MudIcon Icon="@Icons.Material.Filled.Search" Size="Size.Large" Class="mb-2" />
+                <br />
+                Nenhuma venda encontrada com os filtros selecionados
+            </MudText>
+        </NoRecordsContent>
+    </MudTable>
 
-        <!-- Paginação -->
-        <div class="flex justify-between items-center mt-6">
-            <div class="text-sm text-gray-600">
-                Mostrando @((paginaAtual - 1) * itensPorPagina + 1) a @Math.Min(paginaAtual * itensPorPagina, vendasFiltradas.Count) de @vendasFiltradas.Count registros
-            </div>
-            <div class="flex gap-2">
-                <button @onclick="PaginaAnterior" disabled="@(paginaAtual == 1)" class="px-4 py-2 border rounded-lg disabled:opacity-50">
-                    Anterior
-                </button>
-                <button @onclick="ProximaPagina" disabled="@(paginaAtual >= totalPaginas)" class="px-4 py-2 border rounded-lg disabled:opacity-50">
-                    Próxima
-                </button>
-            </div>
+    <!-- Paginação -->
+    <div class="d-flex justify-space-between align-center mt-6">
+        <MudText Typo="Typo.body2" Color="Color.Secondary">
+            Mostrando @((paginaAtual - 1) * itensPorPagina + 1) a @Math.Min(paginaAtual * itensPorPagina, vendasFiltradas.Count) de @vendasFiltradas.Count registros
+        </MudText>
+        <div>
+            <MudButton Variant="Variant.Outlined" OnClick="PaginaAnterior" Disabled="@(paginaAtual == 1)" Class="mr-2">
+                Anterior
+            </MudButton>
+            <MudButton Variant="Variant.Outlined" OnClick="ProximaPagina" Disabled="@(paginaAtual >= totalPaginas)">
+                Próxima
+            </MudButton>
         </div>
     </div>
-</div>
+</MudPaper>
 
 @code {
     private List<VendaDto> todasVendas = new();
